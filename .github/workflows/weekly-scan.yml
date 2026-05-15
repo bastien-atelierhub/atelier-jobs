@@ -2,8 +2,8 @@ name: ATELIER Job Scanner
 
 on:
   schedule:
-    - cron: '0 13 * * 1'  # Lundi 10h Paraguay (UTC-3)
-    - cron: '0 13 * * 4'  # Jeudi 10h Paraguay (UTC-3)
+    - cron: '0 13 * * 1'  # Lundi 13:00 UTC
+    - cron: '0 13 * * 4'  # Jeudi 13:00 UTC
   workflow_dispatch:
     inputs:
       platform:
@@ -13,8 +13,8 @@ on:
         type: choice
         options:
           - remoteok
-          - linkedin
           - upwork
+          - linkedin
           - all
 
 jobs:
@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Scan
-        run: node find-jobs.js --${{ github.event.inputs.platform || 'remoteok' }}
+      - name: Scan RemoteOK + Upwork
+        run: node find-jobs.js --remoteok --upwork
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DEEPSEEK_BASE_URL: ${{ secrets.DEEPSEEK_BASE_URL }}
