@@ -1,0 +1,19 @@
+{
+  "name": "atelier-jobs",
+  "version": "1.0.0",
+  "description": "Job scraping & proposal engine — ATELIER",
+  "type": "module",
+  "main": "find-jobs.js",
+  "scripts": {
+    "start": "node find-jobs.js",
+    "linkedin": "node find-jobs.js --linkedin",
+    "upwork": "node find-jobs.js --upwork",
+    "contra": "node find-jobs.js --contra"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "openai": "^4.52.0"
+  }
+}
