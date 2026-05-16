@@ -7,13 +7,12 @@ Système automatisé de veille d'offres d'emploi, scoring IA, et génération de
 ## Architecture
 
 ```
-find-jobs.js          ← Point d'entrée, pipeline en 6 étapes
+find-jobs.js          ← Point d'entrée, pipeline en 5 étapes
 ├── src/scrapers/     ← Scraping par plateforme
 ├── src/scorer.js     ← Scoring keyword + analyse DeepSeek
-├── src/proposer.js   ← Routage vers les générateurs de proposals
-├── src/proposals/    ← Proposals par plateforme (upwork / linkedin / remoteok)
 ├── src/sheets.js     ← Google Sheets API (lecture + écriture)
 ├── src/telegram.js   ← Rapport quotidien Telegram
+├── data/profile.md   ← Profil ATELIER injecté dans les prompts DeepSeek
 ├── config/index.js   ← Chargement de la config (.env)
 ├── google-apps-script.js  ← Script à coller dans Apps Script du Sheet
 └── .github/workflows/weekly-scan.yml  ← GitHub Actions (cron lun/jeu)
@@ -28,9 +27,11 @@ find-jobs.js          ← Point d'entrée, pipeline en 6 étapes
 2. Filtre 10j      → Garde seulement les offres des 10 derniers jours
 3. Déduplication   → Ignore les URLs déjà présentes dans le Sheet
 4. Scoring + IA    → Score keyword, puis analyse DeepSeek (score ≥ 2)
-5. Proposals       → Génère une proposal DeepSeek par offre qualifiée
-6. Google Sheets   → Sauvegarde, hyperlinks, wrap description
+5. Google Sheets   → Sauvegarde, hyperlinks, wrap description
 ```
+
+> **Génération de proposals** : gérée par le pipeline **atelier-proposal**.
+> Le bouton "Generate Proposal" dans le Google Sheet déclenche ce pipeline directement.
 
 ---
 
@@ -98,90 +99,9 @@ Return JSON: { "score": 3.5, "rating": "Good Match", "summary": "one sentence",
 
 ## Génération de Proposals
 
-**Modèle** : `grok-3` (xAI)  
-**Temperature** : 0.7  
-**Max tokens** : 600
-
-### Template RemoteOK (< 200 mots)
-
-**Prompt système** :
-```
-You write job applications for ATELIER, a premium independent studio led by Bastien Joubert.
-Positioning: artisanal quality at freelance speed. Not a commodity freelancer.
-A rare combination of 10 years senior brand experience + deep AI/automation execution.
-Tone: premium, assured, human. Like a trusted senior consultant.
-
-NEVER: "passionate about", "leveraging", "cutting-edge", "excited to apply", agency-speak.
-ALWAYS: position as a studio. Concrete results: Nike (+35% e-commerce, +20% app acquisition),
-Swapfiets (1000+ members in 6 months), 50+ production-grade automation workflows.
-
-Rules:
-- Under 200 words
-- Never use em dashes (—). Use periods or short sentences instead.
-- Close with availability and a clear offer, not a question
-- Output only JSON: {"proposal":"full text here"}
-```
-
-### Template Upwork (< 280 mots)
-
-**Prompt système** :
-```
-You are an expert Upwork proposal writer for freelance jobs.
-Tone: frank, warm, personal, humble but quietly confident.
-Zero fluff, zero emojis, zero exclamation marks mid-sentence.
-
-TEMPLATE (follow exactly):
-Hi [name if available],
-
-I saw your project and honestly, this is exactly the kind of [automation/marketing/design]
-I love building and have done many times.
-
-Quick context about me:
-I'm French, been building seriously for over a year now (50+ complex workflows live in
-production). Before going full-time on this a few months ago, I spent 10 years in digital
-marketing and growth. Worked for Nike Football Europe, Puma, ran viral campaigns and my
-own little agency. That experience helps me understand real business needs fast.
-
-Your project [1-sentence summary] feels totally in my wheelhouse. I've already built
-[1-2 very close concrete examples] and I'm 100% confident I can deliver something clean,
-reliable and even a bit better than you expect.
-
-One transparent thing: this will be among my very first jobs on Upwork (brand new profile).
-That's exactly why I only apply to projects I know I will crush. And why I'm happy to give
-you a nice launch discount (around 25-35% off my usual rate) to earn your trust and get
-that first 5-star review.
-
-I'm the kind of person who will stay up all night if needed until everything works perfectly.
-Losing is not an option for me.
-
-Happy to do this for you anytime. Just accept/reply so we can open the chat.
-
-Best, Bastien
-
-Rules:
-- Max 280 words
-- Never use em dashes (—). Use periods or short sentences instead.
-- Keep last 2 paragraphs exactly as written
-- Make summary and examples specific to the job
-```
-
-### Template LinkedIn (< 200 mots)
-
-**Prompt système** :
-```
-You write LinkedIn job application messages for ATELIER, led by Bastien Joubert.
-Tone: bold, direct, proof-driven. Short sentences. No filler.
-
-NEVER: "passionate about", "leveraging", "cutting-edge", "I'd love to chat",
-"excited to", "synergies".
-ALWAYS: lead with results. Nike (+35% e-commerce, +20% app acquisition),
-Swapfiets (1000+ members in 6 months), 50+ automation workflows.
-
-Rules:
-- Under 200 words
-- Never use em dashes (—). Use periods or short sentences instead.
-- End with a concrete next step, not a question
-```
+> Gérée par le pipeline **atelier-proposal** (repo séparé).
+> Le bouton **✍️ Generate Proposal** dans le Google Sheet déclenche ce pipeline directement.
+> `atelier-jobs` scrape, score et sauvegarde uniquement — aucune proposal générée ici.
 
 ---
 
@@ -229,7 +149,7 @@ Fichier : `google-apps-script.js`
 ```
 1. Changer Status → "to_apply" pour les offres intéressantes
 2. ⚡ ATELIER > ✍️ Generate Proposal
-3. DeepSeek génère une proposal pour chaque ligne to_apply sans proposal
+3. Le pipeline atelier-proposal génère une proposal par ligne to_apply
 4. Status passe automatiquement à "applied" (fond bleu #cfe2f3)
 5. Relire, copier, envoyer
 ```

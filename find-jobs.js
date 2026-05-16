@@ -1,20 +1,18 @@
-import { loadConfig }           from './config/index.js';
-import { scrapeAll }             from './src/scrapers/index.js';
-import { scoreAndAnalyzeJobs }   from './src/scorer.js';
-import { generateProposals }     from './src/proposer.js';
-import { saveToSheets, getExistingUrls } from './src/sheets.js';
+import { loadConfig }                    from './config/index.js';
+import { scrapeAll }                      from './src/scrapers/index.js';
+import { scoreAndAnalyzeJobs }            from './src/scorer.js';
+import { saveToSheets, getExistingUrls }  from './src/sheets.js';
 
 const TEN_DAYS = 10 * 24 * 60 * 60 * 1000;
 
 function parseFlags(argv) {
   const args = argv.slice(2);
   return {
-    linkedin:   args.includes('--linkedin'),
-    upwork:     args.includes('--upwork'),
-    remoteok:   args.includes('--remoteok'),
-    dryRun:     args.includes('--dry-run'),
-    noProposal: args.includes('--no-proposal'),
-    all:        args.includes('--all'), // bypass filtre date
+    linkedin: args.includes('--linkedin'),
+    upwork:   args.includes('--upwork'),
+    remoteok: args.includes('--remoteok'),
+    dryRun:   args.includes('--dry-run'),
+    all:      args.includes('--all'), // bypass filtre date
   };
 }
 
@@ -57,7 +55,7 @@ async function main() {
   console.log('');
 
   // 1. Scraping
-  console.log('[1/6] Scraping...');
+  console.log('[1/5] Scraping...');
   const { jobs: rawJobs, errors: scrapeErrors } = await scrapeAll(config, flags);
   if (scrapeErrors.length) {
     scrapeErrors.forEach(e => console.warn(`  ⚠ ${e.platform}: ${e.error}`));
@@ -69,8 +67,8 @@ async function main() {
     process.exit(0);
   }
 
-  // 2. Filtre 4 jours
-  console.log('[2/6] Filtre 10 jours...');
+  // 2. Filtre 10 jours
+  console.log('[2/5] Filtre 10 jours...');
   const recentJobs = flags.all ? rawJobs : filterRecent(rawJobs);
   const filterLabel = flags.all
     ? `bypass (--all) — ${rawJobs.length} offres`
@@ -83,7 +81,7 @@ async function main() {
   }
 
   // 3. Déduplication
-  console.log('[3/6] Déduplication...');
+  console.log('[3/5] Déduplication...');
   const existingUrls = flags.dryRun ? new Set() : await getExistingUrls(config);
   const freshJobs    = deduplicateByUrl(recentJobs, existingUrls);
   console.log(`  → ${freshJobs.length} offres nouvelles\n`);
@@ -94,37 +92,24 @@ async function main() {
   }
 
   // 4. Scoring + analyse DeepSeek
-  console.log('[4/6] Scoring + analyse DeepSeek...');
+  console.log('[4/5] Scoring + analyse DeepSeek...');
   const scoredJobs = await scoreAndAnalyzeJobs(freshJobs, config);
   const qualified  = scoredJobs.filter(j => j.score >= 2);
   console.log(`  → ${qualified.length}/${scoredJobs.length} offres qualifiées (score ≥ 2)\n`);
 
   printSummary(scoredJobs);
 
-  // 5. Proposals
-  let finalJobs = qualified;
-  if (!flags.noProposal) {
-    console.log('[5/6] Génération des proposals...');
-    finalJobs = await generateProposals(qualified, config);
-    const withProposal = finalJobs.filter(j => j.proposal).length;
-    console.log(`  → ${withProposal} proposals générées\n`);
-  } else {
-    console.log('[5/6] Proposals ignorées (--no-proposal)\n');
-    finalJobs = qualified;
-  }
-
-  // 6. Google Sheets
+  // 5. Google Sheets
   if (!flags.dryRun) {
-    console.log('[6/6] Sauvegarde dans Google Sheets...');
-    await saveToSheets(finalJobs, config);
+    console.log('[5/5] Sauvegarde dans Google Sheets...');
+    await saveToSheets(qualified, config);
   } else {
-    console.log('[6/6] Sheets ignoré (--dry-run)\n');
-    finalJobs.forEach(j => {
+    console.log('[5/5] Sheets ignoré (--dry-run)\n');
+    qualified.forEach(j => {
       console.log(`\n[${j.score}] ${j.title} — ${j.company} (${j.platform})`);
       if (j.rating)       console.log(`  Rating: ${j.rating}`);
       if (j.summary)      console.log(`  ${j.summary}`);
       if (j.fit_analysis) j.fit_analysis.forEach(b => console.log(`  ${b}`));
-      if (j.proposal)     console.log(`\n  ${j.proposal}`);
     });
   }
 
