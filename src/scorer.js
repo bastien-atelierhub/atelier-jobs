@@ -128,6 +128,7 @@ Return ONLY this JSON (no markdown, no explanation):
 {
   "score": <refined float 1.0-5.0>,
   "rating": "<Perfect Match|Strong Match|Good Match|Weak Match>",
+  "description_summary": "<1 paragraph, 3-4 sentences max: what the company does, what the role is, what they specifically need>",
   "summary": "<2 sentences max: what the job needs and why ATELIER fits>",
   "fit_bullets": [
     "<✅ or ⚠️ or ❌> <specific fit point>",
@@ -152,7 +153,7 @@ Rules:
     model: config.deepseek.model || 'deepseek-chat',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.3,
-    max_tokens: 500,
+    max_tokens: 700,
   });
 
   const raw = response.choices[0].message.content.trim();
@@ -183,12 +184,13 @@ export async function scoreAndAnalyzeJobs(jobs, config) {
         const analysis = await analyzeWithDeepSeek(job, job.score, config);
         return {
           ...job,
-          score:                 analysis.score,
-          rating:                analysis.rating,
-          summary:               analysis.summary,
-          fit_analysis:          analysis.fit_analysis,
-          role_type:             analysis.role_type,
-          identity_mode:         analysis.identity_mode,
+          score:                analysis.score,
+          rating:               analysis.rating,
+          description_summary:  analysis.description_summary,
+          summary:              analysis.summary,
+          fit_analysis:         analysis.fit_analysis,
+          role_type:            analysis.role_type,
+          identity_mode:        analysis.identity_mode,
           relevant_proof_points: analysis.relevant_proof_points,
         };
       } catch (err) {

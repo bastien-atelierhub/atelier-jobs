@@ -172,7 +172,7 @@ function jobToRow(job) {
 
   return [
     (job.title || '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#(\d+);/g, (_, c) => String.fromCharCode(+c)), // A - Job Title
-    stripHtml(job.description).slice(0, 4000), // B - Description
+    job.description_summary || stripHtml(job.description).slice(0, 4000), // B - Description
     job.company     || '',   // C - Company
     job.platform    || '',   // D - Platform
     job.score       ?? 0,    // E - Score
