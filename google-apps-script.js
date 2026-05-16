@@ -7,16 +7,30 @@
 // A: Job Title  B: Description  C: Company   D: Platform  E: Score
 // F: Fit For The Role  G: Status  H: Job URL  I: Date Posted  J: Proposal
 
-const DEEPSEEK_API_KEY = 'sk-61be0affc8274a74bbb9d54621e062ce';
-const DEEPSEEK_URL     = 'https://api.deepseek.com/v1/chat/completions';
-const DEEPSEEK_MODEL   = 'deepseek-chat';
+const GROK_URL   = 'https://api.x.ai/v1/chat/completions';
+const GROK_MODEL = 'grok-3';
 
-const ATELIER_PROFILE = `Bastien Joubert — ATELIER studio.
-10+ ans brand strategy, digital marketing, creative direction.
-Nike Amsterdam: +35% e-commerce, +20% app acquisition, +30% brand visibility.
-Swapfiets Barcelona: 1000+ membres en 6 mois depuis zéro.
-50+ automation workflows (n8n, Make, Apify, Claude Code).
-Expert: AI automation, web dev, brand strategy, design, crypto/Web3.`;
+const ATELIER_PROFILE = `ATELIER — premium creative and AI studio led by Bastien Joubert.
+Location: Remote / South America. Languages: English (primary), French (native), Spanish (fluent).
+
+BACKGROUND:
+- 10+ years brand strategy, digital marketing, creative direction
+- Nike Brand Digital Specialist, Western Europe (Amsterdam, 3.5 years)
+  - Tiempo x Totti: flew to Rome solo, directed full shoot, sold out worldwide in 48h
+  - Winner Stays: large-budget Nike Football Europe campaign, led creative strategy
+  - +35% e-commerce revenue, +20% app user acquisition, +30% brand visibility
+- Swapfiets Spain — Barcelona launch. 1,000+ members in 6 months from zero.
+  Zero paid media. Launched during Covid lockdowns and curfews. Pure organic growth.
+- Isobar Colombia — led 8-person innovation team
+- Almara (Saudi Arabia, current client) — wellness brand. Full identity, website, social.
+- 50+ complex n8n workflows in production (lead enrichment, outreach, content pipelines)
+- Expert: Claude Code, n8n, Make.com, Apify, Blotato
+
+KEY PROOF POINTS:
+- Tiempo x Totti — flew to Rome, directed shoot, sold out worldwide in 48h
+- Winner Stays — large-budget Nike Football Europe campaign
+- Swapfiets — 1,000+ members in 6 months, zero paid media, during Covid lockdowns
+- 50+ automation workflows in production (n8n, Make, Claude Code, Apify)`;
 
 // ── Menu ──────────────────────────────────────────────────────────────────────
 
@@ -33,6 +47,7 @@ function onOpen() {
     .addItem('🗑️ Supprimer offres > 15 jours', 'deleteOldJobs')
     .addSeparator()
     .addItem('🔑 Setup GitHub Token', 'setupGitHubToken')
+    .addItem('🔑 Setup Grok API Key', 'setupGrokApiKey')
     .addToUi();
 }
 
@@ -59,7 +74,7 @@ function generateAllProposals() {
 
     if (!title) continue;
 
-    const result = callDeepSeek(title, description, company, platform, fit);
+    const result = callGrok(title, description, company, platform, fit);
 
     if (result.error) {
       errors++;
@@ -152,7 +167,7 @@ function triggerGitHubWorkflow(platform) {
   }
 }
 
-// ── Setup GitHub Token ────────────────────────────────────────────────────────
+// ── Setup keys ────────────────────────────────────────────────────────────────
 
 function setupGitHubToken() {
   const ui     = SpreadsheetApp.getUi();
@@ -168,22 +183,37 @@ function setupGitHubToken() {
   }
 }
 
-// ── DeepSeek caller ───────────────────────────────────────────────────────────
+function setupGrokApiKey() {
+  const ui     = SpreadsheetApp.getUi();
+  const result = ui.prompt(
+    'Grok API Key',
+    'Entre ta clé API xAI / Grok (commence par xai-...) :',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (result.getSelectedButton() === ui.Button.OK) {
+    PropertiesService.getScriptProperties()
+      .setProperty('GROK_API_KEY', result.getResponseText().trim());
+    ui.alert('✅ Clé Grok sauvegardée.');
+  }
+}
 
-function callDeepSeek(title, description, company, platform, fit) {
+// ── Grok caller ───────────────────────────────────────────────────────────────
+
+function callGrok(title, description, company, platform, fit) {
+  const apiKey       = PropertiesService.getScriptProperties().getProperty('GROK_API_KEY');
   const systemPrompt = buildSystemPrompt(platform);
   const userPrompt   = `Write a proposal for this job.
 
 Platform: ${platform}
 Job Title: ${title}
 Company: ${company || 'the client'}
-Description: ${(description || '').slice(0, 1200)}
+Description: ${(description || '').slice(0, 1500)}
 ${fit ? `\nFit analysis:\n${fit}` : ''}
 
 Follow the template exactly. Output only JSON: {"proposal":"full text here"}`;
 
   const payload = JSON.stringify({
-    model:       DEEPSEEK_MODEL,
+    model:       GROK_MODEL,
     messages:    [
       { role: 'system', content: systemPrompt },
       { role: 'user',   content: userPrompt   },
@@ -195,13 +225,13 @@ Follow the template exactly. Output only JSON: {"proposal":"full text here"}`;
   const options = {
     method:             'post',
     contentType:        'application/json',
-    headers:            { Authorization: `Bearer ${DEEPSEEK_API_KEY}` },
+    headers:            { Authorization: `Bearer ${apiKey}` },
     payload,
     muteHttpExceptions: true,
   };
 
   try {
-    const response = UrlFetchApp.fetch(DEEPSEEK_URL, options);
+    const response = UrlFetchApp.fetch(GROK_URL, options);
     const json     = JSON.parse(response.getContentText());
 
     if (json.error) return { error: json.error.message };
@@ -220,63 +250,85 @@ Follow the template exactly. Output only JSON: {"proposal":"full text here"}`;
 
 function buildSystemPrompt(platform) {
   if (platform === 'upwork') {
-    return `You are an expert Upwork proposal writer for freelance jobs.
-Tone: frank, warm, personal, humble but quietly confident.
-Zero fluff, zero emojis, zero exclamation marks mid-sentence.
+    return `You write Upwork proposals for ATELIER, a premium creative and AI studio led by Bastien Joubert.
+Present as ATELIER studio. Sign "Bastien Joubert — ATELIER".
 
-TEMPLATE (follow exactly):
-Hi [name if available],
+PROFILE:
+${ATELIER_PROFILE}
 
-I saw your project and honestly, this is exactly the kind of [automation/marketing/design] I love building and have done many times.
+VOICE AND STYLE:
+- Frank, warm, personal, humble but quietly confident.
+- Zero fluff, zero emojis, zero exclamation marks mid-sentence.
+- Never use em dashes (—). Use periods or new sentences instead.
+- Never use: passionate, leverage, end-to-end, reach out, synergies, journey, excited to, love to, cutting-edge, full potential.
+- Short sentences. Short paragraphs.
 
-Quick context about me:
-I'm French, been building seriously for over a year now (50+ complex workflows live in production). Before going full-time on this a few months ago, I spent 10 years in digital marketing and growth. Worked for Nike Football Europe, Puma, ran viral campaigns and my own little agency. That experience helps me understand real business needs fast.
+TEMPLATE (follow exactly, adapt the specifics):
+Hi [first name if available in job post, otherwise skip salutation],
 
-Your project [1-sentence summary of what they want] feels totally in my wheelhouse. I've already built [1-2 very close concrete examples] and I'm 100% confident I can deliver something clean, reliable and even a bit better than you expect.
+I saw your project and honestly, this is exactly the kind of [automation/marketing/design/etc] I have built many times.
 
-One transparent thing: this will be among my very first jobs on Upwork (brand new profile). That's exactly why I only apply to projects I know I will crush. And why I'm happy to give you a nice launch discount (around 25-35% off my usual rate) to earn your trust and get that first 5-star review.
+Quick context:
+I'm French, been building seriously for over a year now (50+ complex workflows live in production). Before going full-time on this, I spent 10 years in digital marketing and brand strategy. Worked for Nike Football Europe, ran large campaigns, launched brands. That experience means I understand real business needs fast.
+
+[1 paragraph: what their project needs + 1-2 specific concrete examples from ATELIER's background that match]
+
+One transparent thing: this will be among my very first jobs on Upwork (brand new profile). That's exactly why I only apply to projects I know I will deliver on. And why I'm happy to give you a launch discount (around 25-35% off) to earn your trust and get that first 5-star review.
 
 I'm the kind of person who will stay up all night if needed until everything works perfectly. Losing is not an option for me.
 
-Happy to do this for you anytime. Just accept/reply so we can open the chat and jump on a quick call if you want.
+Happy to do this for you. Just accept or reply so we can open the chat.
 
-Looking forward to working together!
-Best,
-Bastien
+Bastien Joubert — ATELIER
 
-Rules:
-- Max 280 words
-- Never use em dashes (—). Use periods or short sentences instead.
-- Keep last 2 paragraphs exactly as written
-- Make summary and examples specific to the job
-- Output only JSON: {"proposal":"full text here"}`;
+LENGTH: 150 to 220 words maximum.
+Output only JSON: {"proposal":"full text here"}`;
   }
 
   if (platform === 'remoteok') {
-    return `You write job applications for ATELIER, a premium independent studio led by Bastien Joubert.
-Positioning: artisanal quality at freelance speed. Not a commodity freelancer. A rare combination of 10 years senior brand experience + deep AI/automation execution.
-Tone: premium, assured, human. Like a trusted senior consultant.
+    return `You write job applications for ATELIER, a premium creative and AI studio led by Bastien Joubert.
+Present as ATELIER studio. Sign "Bastien Joubert — ATELIER".
 
-NEVER: "passionate about", "leveraging", "cutting-edge", "excited to apply", agency-speak.
-ALWAYS: position as a studio. Concrete results: Nike (+35% e-commerce, +20% app acquisition), Swapfiets (1000+ members in 6 months), 50+ production-grade automation workflows.
+PROFILE:
+${ATELIER_PROFILE}
 
-Rules:
-- Under 200 words
-- Never use em dashes (—). Use periods or short sentences instead.
-- Close with availability and a clear offer, not a question
-- Output only JSON: {"proposal":"full text here"}`;
+VOICE AND STYLE:
+- Bold, direct, proof-driven. Short sentences. Short paragraphs.
+- Never use em dashes (—). Use periods or new sentences instead.
+- Never open with "Hi" or any salutation.
+- Never use: passionate, leverage, end-to-end, reach out, synergies, journey, excited to, love to, cutting-edge, full potential.
+- Lead with a result or a direct statement. No soft openers.
+
+CLOSING:
+- End with a concrete next step or direct offer. Not a question.
+- Signature only: "Bastien Joubert — ATELIER".
+
+LENGTH: Under 200 words.
+Output only JSON: {"proposal":"full text here"}`;
   }
 
   // Default: LinkedIn
   return `You write LinkedIn job application messages for ATELIER, led by Bastien Joubert.
-Tone: bold, direct, proof-driven. Short sentences. No filler.
 
-NEVER: "passionate about", "leveraging", "cutting-edge", "I'd love to chat", "excited to", "synergies".
-ALWAYS: lead with results. Nike (+35% e-commerce, +20% app acquisition), Swapfiets (1000+ members in 6 months), 50+ automation workflows.
+PROFILE:
+${ATELIER_PROFILE}
 
-Rules:
-- Under 200 words
-- Never use em dashes (—). Use periods or short sentences instead.
-- End with a concrete next step, not a question
-- Output only JSON: {"proposal":"full text here"}`;
+VOICE AND STYLE:
+- Bold, direct, proof-driven. Short sentences. Short paragraphs.
+- Never use em dashes (—). Use periods or new sentences instead.
+- Never open with "Hi" or any salutation.
+- Never use: passionate, leverage, end-to-end, reach out, synergies, journey, excited to, love to, cutting-edge, full potential.
+- Lead with a result or a direct statement. No soft openers.
+
+IDENTITY:
+- Present as Bastien Joubert, senior professional. Sign "Bastien Joubert".
+- If company is unknown or missing: use "you" and "your". Never "they" or "them".
+
+CLOSING:
+- End with a concrete next step or direct question.
+- Never: "Looking forward to hearing from you", "Best regards", "Kind regards".
+- Signature only: "Bastien Joubert".
+
+LENGTH: Under 200 words.
+Output only JSON: {"proposal":"full text here"}`;
 }

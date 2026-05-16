@@ -1,4 +1,6 @@
 import OpenAI from 'openai';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 const CATEGORIES = [
   {
@@ -38,7 +40,7 @@ const CATEGORIES = [
     ],
   },
   {
-    weight: 4,
+    weight: 3,
     keywords: [
       'crypto', 'web3', 'blockchain', 'nft', 'defi', 'dao',
       'token', 'smart contract', 'web 3',
@@ -57,15 +59,13 @@ const POSITIVE_SIGNALS = [
   'english', 'international', 'series a', 'seed',
 ];
 
-const ATELIER_PROFILE = `
-Bastien Joubert — ATELIER Studio
-- 10+ years brand strategy, digital marketing, creative direction
-- Nike Brand Digital Specialist Amsterdam: +35% e-commerce, +20% app acquisition
-- Swapfiets Barcelona: 1000+ members in 6 months from scratch
-- 50+ automation workflows built (n8n, Make, Claude Code, Apify)
-- Expert: AI automation, web dev, brand strategy, design, crypto/Web3
-- Services: AI automation, web dev, marketing strategy, design, app dev, AI video
-`.trim();
+function loadProfile() {
+  try {
+    return readFileSync(join(process.cwd(), 'data/profile.md'), 'utf8');
+  } catch {
+    return 'ATELIER — premium creative and AI studio led by Bastien Joubert. 10+ years brand strategy, 50+ automation workflows.';
+  }
+}
 
 export function getRating(score) {
   if (score >= 5)   return 'Perfect Match';
@@ -102,10 +102,12 @@ export async function analyzeWithDeepSeek(job, score, config) {
     baseURL: config.deepseek.baseUrl,
   });
 
+  const profile = loadProfile();
+
   const prompt = `You are evaluating a freelance job opportunity for ATELIER studio.
 
 ATELIER PROFILE:
-${ATELIER_PROFILE}
+${profile}
 
 JOB TO EVALUATE:
 Title: ${job.title}
@@ -115,44 +117,60 @@ Description: ${(job.description || '').slice(0, 800)}
 
 Keyword-based pre-score: ${score}/5
 
+Determine:
+- role_type: one of [brand_strategy, ai_automation, web_dev, content, product, other]
+- identity_mode:
+  - "atelier" if platform is upwork or remoteok
+  - "bastien_contract" if platform is linkedin and role appears contract/freelance
+  - "bastien_permanent" if platform is linkedin and role appears permanent/full-time
+
 Return ONLY this JSON (no markdown, no explanation):
 {
-  "score": <refined float 1.0-5.0 based on your analysis>,
+  "score": <refined float 1.0-5.0>,
   "rating": "<Perfect Match|Strong Match|Good Match|Weak Match>",
   "summary": "<2 sentences max: what the job needs and why ATELIER fits>",
-  "fit_analysis": [
+  "fit_bullets": [
     "<✅ or ⚠️ or ❌> <specific fit point>",
     "<✅ or ⚠️ or ❌> <specific fit point>",
     "<✅ or ⚠️ or ❌> <specific fit point>",
     "<✅ or ⚠️ or ❌> <specific fit point>"
+  ],
+  "role_type": "<brand_strategy|ai_automation|web_dev|content|product|other>",
+  "identity_mode": "<atelier|bastien_contract|bastien_permanent>",
+  "relevant_proof_points": [
+    "<specific ATELIER experience that maps to this job and why>"
   ]
 }
 
 Rules:
-- score must align with rating: Perfect≥5, Strong≥4, Good≥3, Weak≥2
-- fit_analysis: max 4 bullets, be specific to THIS job and ATELIER's actual experience
-- ✅ = strong match, ⚠️ = partial/transferable, ❌ = gap or risk`;
+- score must align with rating: Perfect>=5, Strong>=4, Good>=3, Weak<3
+- fit_bullets: max 4 bullets, specific to THIS job
+- ✅ = strong match, ⚠️ = partial/transferable, ❌ = gap or risk
+- relevant_proof_points: max 3, pick the most relevant from the profile`;
 
   const response = await client.chat.completions.create({
     model: config.deepseek.model || 'deepseek-chat',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.3,
-    max_tokens: 400,
+    max_tokens: 500,
   });
 
   const raw = response.choices[0].message.content.trim();
   const cleaned = raw.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
-  return JSON.parse(cleaned);
+  const parsed = JSON.parse(cleaned);
+
+  // backward compat: fit_bullets → fit_analysis (used by sheets.js)
+  parsed.fit_analysis = parsed.fit_bullets ?? parsed.fit_analysis ?? [];
+
+  return parsed;
 }
 
-// Synchronous — backward compatible, used when no DeepSeek config available
 export function scoreJobs(jobs) {
   return jobs
     .map(job => ({ ...job, score: scoreJob(job) }))
     .sort((a, b) => b.score - a.score);
 }
 
-// Async — enriches score >= 2 with DeepSeek analysis
 export async function scoreAndAnalyzeJobs(jobs, config) {
   const scored = jobs.map(job => ({ ...job, score: scoreJob(job) }));
 
@@ -165,10 +183,13 @@ export async function scoreAndAnalyzeJobs(jobs, config) {
         const analysis = await analyzeWithDeepSeek(job, job.score, config);
         return {
           ...job,
-          score:        analysis.score,
-          rating:       analysis.rating,
-          summary:      analysis.summary,
-          fit_analysis: analysis.fit_analysis,
+          score:                 analysis.score,
+          rating:                analysis.rating,
+          summary:               analysis.summary,
+          fit_analysis:          analysis.fit_analysis,
+          role_type:             analysis.role_type,
+          identity_mode:         analysis.identity_mode,
+          relevant_proof_points: analysis.relevant_proof_points,
         };
       } catch (err) {
         console.warn(`[scorer] DeepSeek failed for "${job.title}":`, err.message);

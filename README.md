@@ -98,7 +98,7 @@ Return JSON: { "score": 3.5, "rating": "Good Match", "summary": "one sentence",
 
 ## Génération de Proposals
 
-**Modèle** : `deepseek-chat`  
+**Modèle** : `grok-3` (xAI)  
 **Temperature** : 0.7  
 **Max tokens** : 600
 
@@ -317,8 +317,9 @@ node find-jobs.js --remoteok --no-proposal
 
 | Secret | Description |
 |--------|-------------|
-| `DEEPSEEK_API_KEY` | Clé API DeepSeek |
+| `DEEPSEEK_API_KEY` | Clé API DeepSeek (scoring uniquement) |
 | `DEEPSEEK_BASE_URL` | `https://api.deepseek.com/v1` |
+| `GROK_API_KEY` | Clé API xAI / Grok (génération proposals) |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Email du compte de service Google |
 | `GOOGLE_PRIVATE_KEY` | Clé privée RSA complète |
 | `GOOGLE_SHEET_ID` | ID du Google Sheet |

@@ -1,19 +1,19 @@
 import OpenAI from 'openai';
-import { generateUpworkProposal }  from './proposals/upwork-proposal.js';
+import { generateUpworkProposal }   from './proposals/upwork-proposal.js';
 import { generateLinkedinProposal } from './proposals/linkedin-proposal.js';
 import { generateRemoteokProposal } from './proposals/remoteok-proposal.js';
 
 export async function generateProposals(jobs, config) {
   const client = new OpenAI({
-    apiKey: config.deepseek.apiKey,
-    baseURL: config.deepseek.baseUrl,
+    apiKey:  config.grok.apiKey,
+    baseURL: config.grok.baseUrl,
   });
 
   const qualified = jobs.filter(j => j.score >= 2);
   console.log(`[proposer] ${qualified.length} offres qualifiées (score ≥ 2)`);
 
   const results = await Promise.allSettled(
-    qualified.map(job => generateOne(job, client))
+    qualified.map(job => generateOne(job, client, config.grok.model))
   );
 
   return results.map((r, i) => ({
@@ -23,13 +23,12 @@ export async function generateProposals(jobs, config) {
   }));
 }
 
-async function generateOne(job, client) {
+async function generateOne(job, client, model) {
   const platform = (job.platform || '').toLowerCase();
 
-  if (platform === 'upwork')   return generateUpworkProposal(job, client);
-  if (platform === 'linkedin') return generateLinkedinProposal(job, client);
-  if (platform === 'remoteok') return generateRemoteokProposal(job, client);
+  if (platform === 'upwork')   return generateUpworkProposal(job, client, model);
+  if (platform === 'linkedin') return generateLinkedinProposal(job, client, model);
+  if (platform === 'remoteok') return generateRemoteokProposal(job, client, model);
 
-  // Fallback → LinkedIn tone for unknown platforms
-  return generateLinkedinProposal(job, client);
+  return generateLinkedinProposal(job, client, model);
 }
