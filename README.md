@@ -1,6 +1,8 @@
-# ATELIER — Job Scraper & Proposal System
+# ATELIER — Job Scraper & Scoring System
 
-Système automatisé de veille d'offres d'emploi, scoring IA, et génération de proposals pour ATELIER (Bastien Joubert). Scrape RemoteOK, LinkedIn et Upwork, score chaque offre avec DeepSeek, génère des proposals personnalisées, et sauvegarde tout dans Google Sheets.
+Système automatisé de veille d'offres d'emploi et scoring IA pour ATELIER (Bastien Joubert). Scrape RemoteOK, LinkedIn et Upwork, score chaque offre avec DeepSeek, et sauvegarde tout dans Google Sheets.
+
+La génération de proposals est gérée par le repo séparé **[atelier-proposal](https://github.com/bastien-atelierhub/atelier-proposal)**.
 
 ---
 
@@ -12,7 +14,7 @@ find-jobs.js          ← Point d'entrée, pipeline en 5 étapes
 ├── src/scorer.js     ← Scoring keyword + analyse DeepSeek
 ├── src/sheets.js     ← Google Sheets API (lecture + écriture)
 ├── src/telegram.js   ← Rapport quotidien Telegram
-├── data/profile.md   ← Profil ATELIER injecté dans les prompts DeepSeek
+├── data/profile.md   ← Profil ATELIER v3 injecté dans les prompts DeepSeek
 ├── config/index.js   ← Chargement de la config (.env)
 ├── google-apps-script.js  ← Script à coller dans Apps Script du Sheet
 └── .github/workflows/weekly-scan.yml  ← GitHub Actions (cron lun/jeu)
@@ -20,7 +22,7 @@ find-jobs.js          ← Point d'entrée, pipeline en 5 étapes
 
 ---
 
-## Pipeline (6 étapes)
+## Pipeline (5 étapes)
 
 ```
 1. Scraping        → Récupère les offres brutes des plateformes
@@ -30,8 +32,8 @@ find-jobs.js          ← Point d'entrée, pipeline en 5 étapes
 5. Google Sheets   → Sauvegarde, hyperlinks, wrap description
 ```
 
-> **Génération de proposals** : gérée par le pipeline **atelier-proposal**.
-> Le bouton "Generate Proposal" dans le Google Sheet déclenche ce pipeline directement.
+> **Génération de proposals** : gérée par **atelier-proposal**.
+> Le bouton **✍️ Generate Proposal** dans le Sheet déclenche ce pipeline directement via GitHub Actions.
 
 ---
 
@@ -57,51 +59,37 @@ find-jobs.js          ← Point d'entrée, pipeline en 5 étapes
 ## Scoring
 
 ### Étape 1 — Score keyword (synchrone)
-Score de 0 à 5 calculé localement selon des catégories pondérées :
+Score de 1 à 5 calculé localement selon des catégories pondérées :
 
-| Catégorie | Mots-clés | Points |
-|-----------|-----------|--------|
-| Automation | n8n, make, zapier, workflow, automation... | +1.5 |
-| Web Dev | webflow, nextjs, react, typescript... | +1.0 |
-| Marketing | brand strategy, growth, campaign, ads... | +1.2 |
-| Content | content strategy, copywriting, SEO... | +0.8 |
-| Design | figma, creative direction, UI/UX... | +0.8 |
-| Crypto | web3, blockchain, defi, crypto... | +1.0 |
-| Bonus | remote, freelance, startup, async... | +0.3 |
-| Malus | WordPress, Shopify, Java, PHP... | -1.0 |
+| Catégorie | Mots-clés | Poids |
+|-----------|-----------|-------|
+| Automation | n8n, make, zapier, workflow, llm, claude... | 5 |
+| Web Dev | landing page, website, web app, saas... | 4 |
+| Marketing | brand strategy, go-to-market, positioning... | 4 |
+| Design | figma, ui design, visual identity... | 4 |
+| Content | social media, copywriting, reels, video... | 3 |
+| Crypto | web3, blockchain, defi, nft... | 3 |
+| Bonus | remote, freelance, startup, founder... | +0.3/signal |
+| Malus | wordpress, shopify, event marketing... | → score 1 |
 
 ### Étape 2 — Analyse DeepSeek (asynchrone, score ≥ 2 seulement)
 
-**Modèle** : `deepseek-chat`  
-**Prompt système** :
+**Modèle** : `deepseek-chat` | **Temperature** : 0.3 | **Max tokens** : 500
 
+**Profile injecté** : contenu complet de `data/profile.md` (profil v3 de Bastien)
+
+**JSON retourné** :
+```json
+{
+  "score": 4.2,
+  "rating": "Strong Match",
+  "summary": "2 sentences max sur le match",
+  "fit_bullets": ["✅ point fort", "⚠️ match partiel", "❌ gap"],
+  "role_type": "brand_strategy | ai_automation | web_dev | content | product | other",
+  "identity_mode": "atelier | bastien_contract | bastien_permanent",
+  "relevant_proof_points": ["expérience spécifique qui colle à ce job"]
+}
 ```
-You are an expert job-fit analyzer for ATELIER, a premium independent studio
-led by Bastien Joubert. Score this job on a scale 1-5:
-5 = Perfect match — core skills, right seniority, clear value prop
-4 = Strong match — most skills align, minor gaps
-3 = Good match — solid overlap, some stretch
-2 = Weak match — some relevance but significant gaps
-1 = Poor match — wrong domain or level
-
-Return JSON: { "score": 3.5, "rating": "Good Match", "summary": "one sentence",
-"fit_analysis": ["point 1", "point 2", "point 3"] }
-```
-
-**Profile injecté dans chaque requête** (extrait de `profile.md`) :
-- 10+ ans brand strategy, digital marketing, creative direction
-- Nike Amsterdam : +35% e-commerce, +20% app acquisition
-- Swapfiets Barcelona : 1000+ membres en 6 mois depuis zéro
-- 50+ automation workflows (n8n, Make, Apify, Claude Code)
-- Expert : AI automation, web dev, brand strategy, design, crypto/Web3
-
----
-
-## Génération de Proposals
-
-> Gérée par le pipeline **atelier-proposal** (repo séparé).
-> Le bouton **✍️ Generate Proposal** dans le Google Sheet déclenche ce pipeline directement.
-> `atelier-jobs` scrape, score et sauvegarde uniquement — aucune proposal générée ici.
 
 ---
 
@@ -116,42 +104,41 @@ Return JSON: { "score": 3.5, "rating": "Good Match", "summary": "one sentence",
 | C | Company | Nom de l'entreprise |
 | D | Platform | `remoteok` / `linkedin` / `upwork` |
 | E | Score | Score DeepSeek (1.0 – 5.0) |
-| F | Fit For The Role | Bullet points de l'analyse DeepSeek |
-| G | Status | Dropdown : `to_review` / `to_apply` / `applied` / `ignored` |
+| F | Fit For The Role | Bullet points ✅ ⚠️ ❌ de l'analyse DeepSeek |
+| G | Status | `to_review` / `to_apply` / `applied` / `ignored` |
 | H | Job URL | Lien hypertexte cliquable |
-| I | Date Posted | Date de publication du job (ex: `14 May`) |
-| J | Proposal | Texte généré par DeepSeek (via Apps Script) |
+| I | Date Posted | Date de publication (ex: `14 May`) |
 
 ### Déduplication
-Avant chaque import, le système lit la colonne H (Job URL) pour éviter les doublons. Les offres déjà présentes sont ignorées.
+Avant chaque import, le système lit la colonne H (Job URL) pour éviter les doublons.
 
 ---
 
 ## Google Apps Script
 
-Fichier : `google-apps-script.js`  
+Fichier : `google-apps-script.js`
 À coller dans : **Extensions > Apps Script > Code.gs**
+
+> Remplacer `ghp_REPLACE_WITH_YOUR_PAT` par ton GitHub Personal Access Token (scope : `workflow`).
 
 ### Menu ⚡ ATELIER
 
 | Bouton | Fonction | Description |
 |--------|----------|-------------|
-| ✍️ Generate Proposal | `generateAllProposals()` | Génère proposals pour toutes les lignes `to_apply` sans proposal |
+| ✍️ Generate Proposal | `generateAllProposals()` | Déclenche atelier-proposal pour chaque ligne `to_apply` |
 | ❌ Ignore all "to_review" | `ignoreAllToReview()` | Passe toutes les offres `to_review` en `ignored` |
 | 🔍 Scan RemoteOK | `triggerRemoteOK()` | Déclenche GitHub Actions (workflow_dispatch) |
 | 🔍 Scan LinkedIn | `triggerLinkedIn()` | Déclenche GitHub Actions |
 | 🔍 Scan Upwork | `triggerUpwork()` | Déclenche GitHub Actions |
 | 🗑️ Supprimer offres > 15 jours | `deleteOldJobs()` | Supprime les lignes > 15 jours |
-| 🔑 Setup GitHub Token | `setupGitHubToken()` | Stocke le PAT GitHub dans ScriptProperties |
 
 ### Workflow manuel
 
 ```
 1. Changer Status → "to_apply" pour les offres intéressantes
 2. ⚡ ATELIER > ✍️ Generate Proposal
-3. Le pipeline atelier-proposal génère une proposal par ligne to_apply
-4. Status passe automatiquement à "applied" (fond bleu #cfe2f3)
-5. Relire, copier, envoyer
+3. atelier-proposal génère une proposal + Google Doc + notification Telegram
+4. Status passe automatiquement à "applied" (fond bleu)
 ```
 
 ---
@@ -161,14 +148,13 @@ Fichier : `google-apps-script.js`
 Fichier : `.github/workflows/weekly-scan.yml`
 
 ### Cron automatique
-- **Lundi 13:00 UTC** et **Jeudi 13:00 UTC** (= 10h Paraguay, UTC-3)
+- **Lundi 13:00 UTC** et **Jeudi 13:00 UTC**
 - Scan RemoteOK uniquement (gratuit)
 - Envoie un rapport Telegram après chaque scan
 
 ### Déclenchement manuel (via boutons Sheet)
-- Nécessite un **GitHub PAT** (scope : `workflow`)
-- Stocké dans Apps Script via 🔑 Setup GitHub Token
-- Supporte les plateformes : `remoteok` / `linkedin` / `upwork` / `all`
+- Nécessite un **GitHub PAT** (scope : `workflow`) hardcodé dans `google-apps-script.js`
+- Supporte les plateformes : `remoteok` / `linkedin` / `upwork`
 
 ---
 
@@ -192,8 +178,8 @@ GOOGLE_SERVICE_ACCOUNT_EMAIL=xxx@xxx.iam.gserviceaccount.com
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 GOOGLE_SHEET_ID=1xxxxxxxxxxxxxxxxxxxxx
 GOOGLE_SHEET_URL=https://docs.google.com/spreadsheets/d/1xxxxxxxxxxxxxxxxxxxxx
-TELEGRAM_BOT_TOKEN=7597195574:xxx
-TELEGRAM_CHAT_ID=1528309519
+TELEGRAM_BOT_TOKEN=xxx
+TELEGRAM_CHAT_ID=xxx
 ```
 
 ### 3. Commandes disponibles
@@ -216,9 +202,6 @@ node find-jobs.js --remoteok --all
 
 # Tester sans écrire dans le Sheet
 node find-jobs.js --remoteok --dry-run
-
-# Sans générer de proposals
-node find-jobs.js --remoteok --no-proposal
 ```
 
 ### 4. Google Apps Script
@@ -226,8 +209,8 @@ node find-jobs.js --remoteok --no-proposal
 1. Ouvrir le Google Sheet
 2. **Extensions > Apps Script**
 3. Coller le contenu de `google-apps-script.js` dans `Code.gs`
-4. Enregistrer et recharger le Sheet
-5. Menu **⚡ ATELIER > 🔑 Setup GitHub Token** → coller ton PAT GitHub
+4. Remplacer `ghp_REPLACE_WITH_YOUR_PAT` par ton vrai PAT GitHub
+5. Enregistrer et recharger le Sheet
 
 ---
 
@@ -237,9 +220,9 @@ node find-jobs.js --remoteok --no-proposal
 
 | Secret | Description |
 |--------|-------------|
-| `DEEPSEEK_API_KEY` | Clé API DeepSeek (scoring uniquement) |
+| `DEEPSEEK_API_KEY` | Clé API DeepSeek (scoring) |
 | `DEEPSEEK_BASE_URL` | `https://api.deepseek.com/v1` |
-| `GROK_API_KEY` | Clé API xAI / Grok (génération proposals) |
+| `GROK_API_KEY` | Clé API xAI / Grok (réservé pour usage futur) |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Email du compte de service Google |
 | `GOOGLE_PRIVATE_KEY` | Clé privée RSA complète |
 | `GOOGLE_SHEET_ID` | ID du Google Sheet |
@@ -254,8 +237,7 @@ node find-jobs.js --remoteok --no-proposal
 |---------|-------|------|
 | RemoteOK API | Illimité | Gratuit |
 | Upwork RSS | Illimité | Gratuit |
-| DeepSeek scoring | ~106 jobs × 2 appels = 212 requêtes/scan | ~$0.02/scan |
-| DeepSeek proposals | ~28 proposals/scan | ~$0.05/scan |
+| DeepSeek scoring | ~50 offres × 2 scans/semaine | ~$0.02/scan |
 | LinkedIn Apify | 50 jobs/run manuel | ~$0.05/run |
 | GitHub Actions | 2 scans/semaine | Gratuit (plan Free) |
-| **Total auto** | **2 scans/semaine** | **~$0.28/mois** |
+| **Total auto** | **2 scans/semaine** | **~$0.16/mois** |
