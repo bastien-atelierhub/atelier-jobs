@@ -18,6 +18,7 @@ on:
           - wwr
           - workingnomads
           - himalayas
+          - jobicy
           - linkedin
           - upwork
           - all
@@ -40,9 +41,9 @@ jobs:
         run: |
           PLATFORM="${{ github.event.inputs.platform || 'freeboards' }}"
           if [ "$PLATFORM" = "freeboards" ]; then
-            node find-jobs.js --remoteok --remotive --wwr --workingnomads --himalayas
+            node find-jobs.js --remoteok --remotive --wwr --workingnomads --himalayas --jobicy
           elif [ "$PLATFORM" = "all" ]; then
-            node find-jobs.js --remoteok --remotive --wwr --workingnomads --himalayas --linkedin --upwork
+            node find-jobs.js --remoteok --remotive --wwr --workingnomads --himalayas --jobicy --linkedin --upwork
           else
             node find-jobs.js --$PLATFORM
           fi

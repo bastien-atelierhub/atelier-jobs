@@ -5,10 +5,12 @@ import { scrapeRemotive }         from './remotive.js';
 import { scrapeWeWorkRemotely }   from './weworkremotely.js';
 import { scrapeWorkingNomads }    from './workingnomads.js';
 import { scrapeHimalayas }        from './himalayas.js';
+import { scrapeJobicy }           from './jobicy.js';
 
 export async function scrapeAll(config, flags = {}) {
   const all = !flags.linkedin && !flags.upwork && !flags.remoteok
-           && !flags.remotive && !flags.wwr && !flags.workingnomads && !flags.himalayas;
+           && !flags.remotive && !flags.wwr && !flags.workingnomads
+           && !flags.himalayas && !flags.jobicy;
 
   const results = [];
   const errors  = [];
@@ -21,6 +23,7 @@ export async function scrapeAll(config, flags = {}) {
     { name: 'weworkremotely', enabled: all || flags.wwr,            fn: scrapeWeWorkRemotely },
     { name: 'workingnomads',  enabled: all || flags.workingnomads,  fn: scrapeWorkingNomads  },
     { name: 'himalayas',      enabled: all || flags.himalayas,      fn: scrapeHimalayas      },
+    { name: 'jobicy',         enabled: all || flags.jobicy,         fn: scrapeJobicy         },
   ];
 
   await Promise.allSettled(

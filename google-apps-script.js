@@ -22,7 +22,13 @@ function onOpen() {
     .addItem('✍️ Generate Proposal', 'generateAllProposals')
     .addItem('❌ Ignore all "to_review"', 'ignoreAllToReview')
     .addSeparator()
+    .addItem('🔍 Scan All Free Boards', 'triggerFreeBoards')
     .addItem('🔍 Scan RemoteOK', 'triggerRemoteOK')
+    .addItem('🔍 Scan Remotive', 'triggerRemotive')
+    .addItem('🔍 Scan WeWorkRemotely', 'triggerWWR')
+    .addItem('🔍 Scan WorkingNomads', 'triggerWorkingNomads')
+    .addItem('🔍 Scan Himalayas', 'triggerHimalayas')
+    .addItem('🔍 Scan Jobicy', 'triggerJobicy')
     .addItem('🔍 Scan LinkedIn', 'triggerLinkedIn')
     .addItem('🔍 Scan Upwork', 'triggerUpwork')
     .addSeparator()
@@ -141,9 +147,15 @@ function deleteOldJobs() {
 
 // ── GitHub Actions triggers (atelier-jobs scraping) ───────────────────────────
 
-function triggerRemoteOK() { triggerJobsScan('remoteok'); }
-function triggerLinkedIn() { triggerJobsScan('linkedin'); }
-function triggerUpwork()   { triggerJobsScan('upwork');   }
+function triggerFreeBoards()    { triggerJobsScan('freeboards');    }
+function triggerRemoteOK()      { triggerJobsScan('remoteok');      }
+function triggerRemotive()      { triggerJobsScan('remotive');      }
+function triggerWWR()           { triggerJobsScan('wwr');           }
+function triggerWorkingNomads() { triggerJobsScan('workingnomads'); }
+function triggerHimalayas()     { triggerJobsScan('himalayas');     }
+function triggerJobicy()        { triggerJobsScan('jobicy');        }
+function triggerLinkedIn()      { triggerJobsScan('linkedin');      }
+function triggerUpwork()        { triggerJobsScan('upwork');        }
 
 function triggerJobsScan(platform) {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME_JOBS}/actions/workflows/${WORKFLOW_JOBS}/dispatches`;

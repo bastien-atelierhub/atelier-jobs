@@ -15,6 +15,7 @@ function parseFlags(argv) {
     wwr:           args.includes('--wwr'),
     workingnomads: args.includes('--workingnomads'),
     himalayas:     args.includes('--himalayas'),
+    jobicy:        args.includes('--jobicy'),
     dryRun:        args.includes('--dry-run'),
     all:           args.includes('--all'), // bypass filtre date
   };
@@ -121,9 +122,10 @@ async function main() {
 }
 
 function resolvePlatforms(flags) {
-  const all = ['linkedin', 'upwork', 'remoteok', 'remotive', 'weworkremotely', 'workingnomads', 'himalayas'];
+  const all = ['linkedin', 'upwork', 'remoteok', 'remotive', 'weworkremotely', 'workingnomads', 'himalayas', 'jobicy'];
   const map = { linkedin: 'linkedin', upwork: 'upwork', remoteok: 'remoteok',
-    remotive: 'remotive', wwr: 'weworkremotely', workingnomads: 'workingnomads', himalayas: 'himalayas' };
+    remotive: 'remotive', wwr: 'weworkremotely', workingnomads: 'workingnomads',
+    himalayas: 'himalayas', jobicy: 'jobicy' };
   const active = Object.entries(map).filter(([k]) => flags[k]).map(([, v]) => v);
   return active.length ? active : all;
 }
