@@ -1,6 +1,6 @@
 # ATELIER — Job Scraper & Scoring System
 
-Système automatisé de veille d'offres d'emploi et scoring IA pour ATELIER (Bastien Joubert). Scrape RemoteOK, LinkedIn et Upwork, score chaque offre avec DeepSeek, et sauvegarde tout dans Google Sheets.
+Système automatisé de veille d'offres d'emploi et scoring IA pour ATELIER (Bastien Joubert). Scrape 7 job boards gratuits + LinkedIn + Upwork, score chaque offre avec DeepSeek, et sauvegarde tout dans Google Sheets.
 
 La génération de proposals est gérée par le repo séparé **[atelier-proposal](https://github.com/bastien-atelierhub/atelier-proposal)**.
 
@@ -39,20 +39,23 @@ find-jobs.js          ← Point d'entrée, pipeline en 5 étapes
 
 ## Scrapers
 
-### RemoteOK (gratuit)
-- API publique : `https://remoteok.com/api?tag=<tag>`
-- Tags scrapés : `automation`, `design`, `marketing`, `ai`, `crypto`, `frontend`, `saas`, `content`
-- 20 offres max par tag
+### Free Boards (gratuits, cron automatique)
 
-### LinkedIn (Apify — payant)
-- Actor : `curious_coder/linkedin-jobs-scraper` ($1.00 / 1,000 résultats)
-- 50 offres max par run (~$0.05/exécution)
-- Déclenché manuellement via bouton Sheet
+| Plateforme | Source | Catégories |
+|------------|--------|------------|
+| **RemoteOK** | API publique `remoteok.com/api` | automation, design, marketing, ai, crypto, frontend, saas, content |
+| **Remotive** | API publique `remotive.com/api/remote-jobs` | marketing, design, artificial-intelligence, writing, product |
+| **WeWorkRemotely** | RSS feeds | sales-and-marketing, design, product, management-and-finance |
+| **WorkingNomads** | API publique `workingnomads.com/api` | marketing, design, content, business-development |
+| **Himalayas** | API publique `himalayas.app/jobs/api` | top 50 offres remote |
+| **Jobicy** | API publique `jobicy.com/api/v2/remote-jobs` | marketing, design, product, brand |
 
-### Upwork (RSS — gratuit)
-- RSS feed : `https://www.upwork.com/ab/feed/jobs/rss`
-- Queries : `AI automation freelance`, `n8n workflow automation`, `brand strategy remote`
-- 10 offres max par query
+### Plateformes payantes / manuelles
+
+| Plateforme | Source | Coût |
+|------------|--------|------|
+| **LinkedIn** | Apify actor `curious_coder/linkedin-jobs-scraper` | ~$0.05/run |
+| **Upwork** | RSS feed `upwork.com/ab/feed/jobs/rss` | Gratuit |
 
 ---
 
@@ -74,7 +77,7 @@ Score de 1 à 5 calculé localement selon des catégories pondérées :
 
 ### Étape 2 — Analyse DeepSeek (asynchrone, score ≥ 2 seulement)
 
-**Modèle** : `deepseek-chat` | **Temperature** : 0.3 | **Max tokens** : 500
+**Modèle** : `deepseek-chat` | **Temperature** : 0.3 | **Max tokens** : 700
 
 **Profile injecté** : contenu complet de `data/profile.md` (profil v3 de Bastien)
 
@@ -85,6 +88,7 @@ Score de 1 à 5 calculé localement selon des catégories pondérées :
   "rating": "Strong Match",
   "summary": "2 sentences max sur le match",
   "fit_bullets": ["✅ point fort", "⚠️ match partiel", "❌ gap"],
+  "description_summary": "1 paragraphe : ce que fait la boîte, le rôle, ce qu'ils cherchent",
   "role_type": "brand_strategy | ai_automation | web_dev | content | product | other",
   "identity_mode": "atelier | bastien_contract | bastien_permanent",
   "relevant_proof_points": ["expérience spécifique qui colle à ce job"]
@@ -100,14 +104,14 @@ Score de 1 à 5 calculé localement selon des catégories pondérées :
 | Col | Nom | Description |
 |-----|-----|-------------|
 | A | Job Title | Titre nettoyé (entités HTML décodées) |
-| B | Description | HTML nettoyé, mojibake corrigé, wrap activé, 4000 chars max |
+| B | Description | Résumé DeepSeek (1 paragraphe) ou description HTML nettoyée, 4000 chars max |
 | C | Company | Nom de l'entreprise |
-| D | Platform | `remoteok` / `linkedin` / `upwork` |
+| D | Platform | `remoteok` / `remotive` / `weworkremotely` / `workingnomads` / `himalayas` / `jobicy` / `linkedin` / `upwork` |
 | E | Score | Score DeepSeek (1.0 – 5.0) |
 | F | Fit For The Role | Bullet points ✅ ⚠️ ❌ de l'analyse DeepSeek |
 | G | Status | `to_review` / `to_apply` / `applied` / `ignored` |
 | H | Job URL | Lien hypertexte cliquable |
-| I | Date Posted | Date de publication (ex: `14 May`) |
+| I | Date Posted | Date de publication format `YYYY-MM-DD` (triable) |
 
 ### Déduplication
 Avant chaque import, le système lit la colonne H (Job URL) pour éviter les doublons.
@@ -119,18 +123,24 @@ Avant chaque import, le système lit la colonne H (Job URL) pour éviter les dou
 Fichier : `google-apps-script.js`
 À coller dans : **Extensions > Apps Script > Code.gs**
 
-> Remplacer `ghp_REPLACE_WITH_YOUR_PAT` par ton GitHub Personal Access Token (scope : `workflow`).
+> Remplacer `GITHUB_TOKEN` par ton GitHub Personal Access Token (scope : `workflow`).
 
 ### Menu ⚡ ATELIER
 
-| Bouton | Fonction | Description |
-|--------|----------|-------------|
-| ✍️ Generate Proposal | `generateAllProposals()` | Déclenche atelier-proposal pour chaque ligne `to_apply` |
-| ❌ Ignore all "to_review" | `ignoreAllToReview()` | Passe toutes les offres `to_review` en `ignored` |
-| 🔍 Scan RemoteOK | `triggerRemoteOK()` | Déclenche GitHub Actions (workflow_dispatch) |
-| 🔍 Scan LinkedIn | `triggerLinkedIn()` | Déclenche GitHub Actions |
-| 🔍 Scan Upwork | `triggerUpwork()` | Déclenche GitHub Actions |
-| 🗑️ Supprimer offres > 15 jours | `deleteOldJobs()` | Supprime les lignes > 15 jours |
+| Bouton | Fonction |
+|--------|----------|
+| ✍️ Generate Proposal | Déclenche atelier-proposal pour chaque ligne `to_apply` |
+| ❌ Ignore all "to_review" | Passe toutes les offres `to_review` en `ignored` |
+| 🔍 Scan All Free Boards | Lance RemoteOK + Remotive + WWR + WorkingNomads + Himalayas + Jobicy |
+| 🔍 Scan RemoteOK | Déclenche GitHub Actions (workflow_dispatch) |
+| 🔍 Scan Remotive | Déclenche GitHub Actions |
+| 🔍 Scan WeWorkRemotely | Déclenche GitHub Actions |
+| 🔍 Scan WorkingNomads | Déclenche GitHub Actions |
+| 🔍 Scan Himalayas | Déclenche GitHub Actions |
+| 🔍 Scan Jobicy | Déclenche GitHub Actions |
+| 🔍 Scan LinkedIn | Déclenche GitHub Actions |
+| 🔍 Scan Upwork | Déclenche GitHub Actions |
+| 🗑️ Supprimer offres > 15 jours | Supprime les lignes > 15 jours |
 
 ### Workflow manuel
 
@@ -149,12 +159,11 @@ Fichier : `.github/workflows/weekly-scan.yml`
 
 ### Cron automatique
 - **Lundi 13:00 UTC** et **Jeudi 13:00 UTC**
-- Scan RemoteOK uniquement (gratuit)
+- Scan "freeboards" : RemoteOK + Remotive + WWR + WorkingNomads + Himalayas + Jobicy
 - Envoie un rapport Telegram après chaque scan
 
-### Déclenchement manuel (via boutons Sheet)
-- Nécessite un **GitHub PAT** (scope : `workflow`) hardcodé dans `google-apps-script.js`
-- Supporte les plateformes : `remoteok` / `linkedin` / `upwork`
+### Déclenchement manuel (via boutons Sheet ou GitHub)
+Options disponibles : `freeboards` / `remoteok` / `remotive` / `wwr` / `workingnomads` / `himalayas` / `jobicy` / `linkedin` / `upwork` / `all`
 
 ---
 
@@ -185,17 +194,18 @@ TELEGRAM_CHAT_ID=xxx
 ### 3. Commandes disponibles
 
 ```bash
-# RemoteOK uniquement
+# Tous les free boards (recommandé)
+node find-jobs.js --remoteok --remotive --wwr --workingnomads --himalayas --jobicy
+
+# Une plateforme spécifique
 node find-jobs.js --remoteok
-
-# LinkedIn uniquement
+node find-jobs.js --remotive
+node find-jobs.js --wwr
+node find-jobs.js --workingnomads
+node find-jobs.js --himalayas
+node find-jobs.js --jobicy
 node find-jobs.js --linkedin
-
-# Upwork uniquement
 node find-jobs.js --upwork
-
-# Toutes les plateformes
-node find-jobs.js --linkedin --upwork --remoteok
 
 # Bypass filtre 10 jours
 node find-jobs.js --remoteok --all
@@ -209,7 +219,7 @@ node find-jobs.js --remoteok --dry-run
 1. Ouvrir le Google Sheet
 2. **Extensions > Apps Script**
 3. Coller le contenu de `google-apps-script.js` dans `Code.gs`
-4. Remplacer `ghp_REPLACE_WITH_YOUR_PAT` par ton vrai PAT GitHub
+4. Remplacer `GITHUB_TOKEN` par ton vrai PAT GitHub (scope : `workflow`)
 5. Enregistrer et recharger le Sheet
 
 ---
@@ -222,10 +232,11 @@ node find-jobs.js --remoteok --dry-run
 |--------|-------------|
 | `DEEPSEEK_API_KEY` | Clé API DeepSeek (scoring) |
 | `DEEPSEEK_BASE_URL` | `https://api.deepseek.com/v1` |
-| `GROK_API_KEY` | Clé API xAI / Grok (réservé pour usage futur) |
+| `GROK_API_KEY` | Clé API xAI / Grok (réservé atelier-proposal) |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Email du compte de service Google |
 | `GOOGLE_PRIVATE_KEY` | Clé privée RSA complète |
 | `GOOGLE_SHEET_ID` | ID du Google Sheet |
+| `GOOGLE_SHEET_URL` | URL complète du Google Sheet |
 | `TELEGRAM_BOT_TOKEN` | Token du bot Telegram |
 | `TELEGRAM_CHAT_ID` | ID du chat Telegram |
 
@@ -235,9 +246,9 @@ node find-jobs.js --remoteok --dry-run
 
 | Service | Usage | Coût |
 |---------|-------|------|
-| RemoteOK API | Illimité | Gratuit |
+| RemoteOK, Remotive, WWR, WorkingNomads, Himalayas, Jobicy | Illimité | Gratuit |
 | Upwork RSS | Illimité | Gratuit |
-| DeepSeek scoring | ~50 offres × 2 scans/semaine | ~$0.02/scan |
+| DeepSeek scoring | ~100 offres × 2 scans/semaine | ~$0.04/scan |
 | LinkedIn Apify | 50 jobs/run manuel | ~$0.05/run |
 | GitHub Actions | 2 scans/semaine | Gratuit (plan Free) |
-| **Total auto** | **2 scans/semaine** | **~$0.16/mois** |
+| **Total auto** | **2 scans/semaine** | **~$0.32/mois** |
