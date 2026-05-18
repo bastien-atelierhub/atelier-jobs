@@ -1,16 +1,26 @@
-import { scrapeLinkedIn }  from './linkedin.js';
-import { scrapeUpwork }    from './upwork.js';
-import { scrapeRemoteOK }  from './remoteok.js';
+import { scrapeLinkedIn }        from './linkedin.js';
+import { scrapeUpwork }           from './upwork.js';
+import { scrapeRemoteOK }         from './remoteok.js';
+import { scrapeRemotive }         from './remotive.js';
+import { scrapeWeWorkRemotely }   from './weworkremotely.js';
+import { scrapeWorkingNomads }    from './workingnomads.js';
+import { scrapeHimalayas }        from './himalayas.js';
 
 export async function scrapeAll(config, flags = {}) {
-  const all = !flags.linkedin && !flags.upwork && !flags.remoteok;
+  const all = !flags.linkedin && !flags.upwork && !flags.remoteok
+           && !flags.remotive && !flags.wwr && !flags.workingnomads && !flags.himalayas;
+
   const results = [];
-  const errors = [];
+  const errors  = [];
 
   const tasks = [
-    { name: 'linkedin', enabled: all || flags.linkedin, fn: scrapeLinkedIn  },
-    { name: 'upwork',   enabled: all || flags.upwork,   fn: scrapeUpwork    },
-    { name: 'remoteok', enabled: all || flags.remoteok, fn: scrapeRemoteOK  },
+    { name: 'linkedin',       enabled: all || flags.linkedin,       fn: scrapeLinkedIn       },
+    { name: 'upwork',         enabled: all || flags.upwork,         fn: scrapeUpwork         },
+    { name: 'remoteok',       enabled: all || flags.remoteok,       fn: scrapeRemoteOK       },
+    { name: 'remotive',       enabled: all || flags.remotive,       fn: scrapeRemotive       },
+    { name: 'weworkremotely', enabled: all || flags.wwr,            fn: scrapeWeWorkRemotely },
+    { name: 'workingnomads',  enabled: all || flags.workingnomads,  fn: scrapeWorkingNomads  },
+    { name: 'himalayas',      enabled: all || flags.himalayas,      fn: scrapeHimalayas      },
   ];
 
   await Promise.allSettled(

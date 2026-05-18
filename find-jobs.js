@@ -8,11 +8,15 @@ const TEN_DAYS = 10 * 24 * 60 * 60 * 1000;
 function parseFlags(argv) {
   const args = argv.slice(2);
   return {
-    linkedin: args.includes('--linkedin'),
-    upwork:   args.includes('--upwork'),
-    remoteok: args.includes('--remoteok'),
-    dryRun:   args.includes('--dry-run'),
-    all:      args.includes('--all'), // bypass filtre date
+    linkedin:      args.includes('--linkedin'),
+    upwork:        args.includes('--upwork'),
+    remoteok:      args.includes('--remoteok'),
+    remotive:      args.includes('--remotive'),
+    wwr:           args.includes('--wwr'),
+    workingnomads: args.includes('--workingnomads'),
+    himalayas:     args.includes('--himalayas'),
+    dryRun:        args.includes('--dry-run'),
+    all:           args.includes('--all'), // bypass filtre date
   };
 }
 
@@ -117,10 +121,11 @@ async function main() {
 }
 
 function resolvePlatforms(flags) {
-  if (!flags.linkedin && !flags.upwork && !flags.remoteok) {
-    return ['linkedin', 'upwork', 'remoteok'];
-  }
-  return ['linkedin', 'upwork', 'remoteok'].filter(p => flags[p]);
+  const all = ['linkedin', 'upwork', 'remoteok', 'remotive', 'weworkremotely', 'workingnomads', 'himalayas'];
+  const map = { linkedin: 'linkedin', upwork: 'upwork', remoteok: 'remoteok',
+    remotive: 'remotive', wwr: 'weworkremotely', workingnomads: 'workingnomads', himalayas: 'himalayas' };
+  const active = Object.entries(map).filter(([k]) => flags[k]).map(([, v]) => v);
+  return active.length ? active : all;
 }
 
 function printSummary(jobs) {

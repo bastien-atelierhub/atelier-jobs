@@ -9,12 +9,17 @@ on:
       platform:
         description: 'Platform to scan'
         required: false
-        default: 'remoteok'
+        default: 'freeboards'
         type: choice
         options:
+          - freeboards
           - remoteok
-          - upwork
+          - remotive
+          - wwr
+          - workingnomads
+          - himalayas
           - linkedin
+          - upwork
           - all
 
 jobs:
@@ -31,8 +36,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Scan RemoteOK
-        run: node find-jobs.js --remoteok
+      - name: Scan Free Boards
+        run: |
+          PLATFORM="${{ github.event.inputs.platform || 'freeboards' }}"
+          if [ "$PLATFORM" = "freeboards" ]; then
+            node find-jobs.js --remoteok --remotive --wwr --workingnomads --himalayas
+          elif [ "$PLATFORM" = "all" ]; then
+            node find-jobs.js --remoteok --remotive --wwr --workingnomads --himalayas --linkedin --upwork
+          else
+            node find-jobs.js --$PLATFORM
+          fi
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DEEPSEEK_BASE_URL: ${{ secrets.DEEPSEEK_BASE_URL }}
