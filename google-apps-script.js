@@ -66,7 +66,7 @@ Job Title: ${title}
 
 ${description}`;
 
-    const success = triggerProposalPipeline(content);
+    const success = triggerProposalPipeline(content, row);
 
     if (success) {
       sheet.getRange(row, 7).setValue('applied');
@@ -83,8 +83,10 @@ ${description}`;
 
 // ── Trigger atelier-proposal pipeline ────────────────────────────────────────
 
-function triggerProposalPipeline(content) {
+function triggerProposalPipeline(content, rowIndex) {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME_PROPOSAL}/actions/workflows/${WORKFLOW_PROPOSAL}/dispatches`;
+
+  const spreadsheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
 
   const options = {
     method:             'post',
@@ -94,7 +96,7 @@ function triggerProposalPipeline(content) {
       Accept:                 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
     },
-    payload:            JSON.stringify({ ref: 'main', inputs: { content } }),
+    payload:            JSON.stringify({ ref: 'main', inputs: { content, row_index: String(rowIndex), spreadsheet_id: spreadsheetId } }),
     muteHttpExceptions: true,
   };
 
