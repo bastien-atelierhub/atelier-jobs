@@ -7,7 +7,7 @@
 // F: Fit For The Role  G: Status  H: Job URL  I: Date Posted
 // ─────────────────────────────────────────────────────────────────────────────
 
-const GITHUB_TOKEN       = 'ghp_REPLACE_WITH_YOUR_PAT'; // GitHub PAT — scope: workflow
+const GITHUB_TOKEN       = PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN');
 const REPO_OWNER         = 'bastien-atelierhub';
 const REPO_NAME_JOBS     = 'atelier-jobs';
 const REPO_NAME_PROPOSAL = 'atelier-proposal';
@@ -102,8 +102,13 @@ function triggerProposalPipeline(content, rowIndex) {
 
   try {
     const response = UrlFetchApp.fetch(url, options);
-    return response.getResponseCode() === 204;
+    const code = response.getResponseCode();
+    if (code !== 204) {
+      console.error(`GitHub API error ${code}: ${response.getContentText()}`);
+    }
+    return code === 204;
   } catch (e) {
+    console.error(`triggerProposalPipeline exception: ${e}`);
     return false;
   }
 }
