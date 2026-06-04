@@ -1,0 +1,53 @@
+name: ATELIER - Generate Proposal
+
+on:
+  workflow_dispatch:
+    inputs:
+      content:
+        description: "URL de l'offre OU texte brut copié-collé"
+        required: true
+        type: string
+      row_index:
+        description: "Numéro de ligne dans le Google Sheet (pour write-back du lien doc)"
+        required: false
+        type: string
+        default: ""
+      spreadsheet_id:
+        description: "ID du Google Sheet pour write-back"
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  generate-proposal:
+    name: Générer la proposal
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installation des dépendances
+        run: |
+          pip install --upgrade pip
+          pip install requests openai google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client json5
+
+      - name: Exécution du pipeline
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GOOGLE_PROPOSALS_FOLDER_ID: ${{ secrets.GOOGLE_PROPOSALS_FOLDER_ID }}
+          GOOGLE_SHEET_ROW_INDEX: ${{ github.event.inputs.row_index }}
+          GOOGLE_SPREADSHEET_ID: ${{ github.event.inputs.spreadsheet_id }}
+        run: |
+          cd src/proposal && python main.py "${{ github.event.inputs.content }}"

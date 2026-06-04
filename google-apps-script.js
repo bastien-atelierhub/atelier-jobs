@@ -10,7 +10,7 @@
 const GITHUB_TOKEN       = PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN');
 const REPO_OWNER         = 'bastien-atelierhub';
 const REPO_NAME_JOBS     = 'atelier-jobs';
-const REPO_NAME_PROPOSAL = 'atelier-proposal';
+const REPO_NAME_PROPOSAL = 'atelier-jobs';
 const WORKFLOW_JOBS      = 'weekly-scan.yml';
 const WORKFLOW_PROPOSAL  = 'proposal.yml';
 
