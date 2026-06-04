@@ -55,6 +55,5 @@ jobs:
           GOOGLE_SHEET_ROW_INDEX: ${{ github.event.inputs.row_index }}
           GOOGLE_SPREADSHEET_ID: ${{ github.event.inputs.spreadsheet_id }}
           IDENTITY_MODE: ${{ github.event.inputs.identity_mode }}
-          IDENTITY_MODE: ${{ github.event.inputs.identity_mode }}
         run: |
           cd src/proposal && python main.py "${{ github.event.inputs.content }}"
