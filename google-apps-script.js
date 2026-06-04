@@ -96,7 +96,7 @@ function triggerProposalPipeline(content, rowIndex) {
       Accept:                 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
     },
-    payload:            JSON.stringify({ ref: 'main', inputs: { content, row_index: String(rowIndex), spreadsheet_id: spreadsheetId } }),
+    payload:            JSON.stringify({ ref: 'main', inputs: { content, row_index: String(rowIndex), spreadsheet_id: spreadsheetId, identity_mode: 'freelance' } }),
     muteHttpExceptions: true,
   };
 

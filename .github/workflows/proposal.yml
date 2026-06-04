@@ -17,6 +17,11 @@ on:
         required: false
         type: string
         default: ""
+      identity_mode:
+        description: "freelance ou permanent"
+        required: false
+        type: string
+        default: "freelance"
 
 jobs:
   generate-proposal:
@@ -49,5 +54,7 @@ jobs:
           GOOGLE_PROPOSALS_FOLDER_ID: ${{ secrets.GOOGLE_PROPOSALS_FOLDER_ID }}
           GOOGLE_SHEET_ROW_INDEX: ${{ github.event.inputs.row_index }}
           GOOGLE_SPREADSHEET_ID: ${{ github.event.inputs.spreadsheet_id }}
+          IDENTITY_MODE: ${{ github.event.inputs.identity_mode }}
+          IDENTITY_MODE: ${{ github.event.inputs.identity_mode }}
         run: |
           cd src/proposal && python main.py "${{ github.event.inputs.content }}"

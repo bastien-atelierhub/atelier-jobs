@@ -63,8 +63,10 @@ def run(raw_input: str) -> None:
 
     raw_content = scraped.get("raw_content", "")
 
+    identity_mode = os.environ.get("IDENTITY_MODE", "").strip() or None
+
     print("[Pipeline] Étape 2/5 : Analyse via DeepSeek...")
-    analysis = analyze_job_offer(scraped, profile_md_content=profile_md)
+    analysis = analyze_job_offer(scraped, profile_md_content=profile_md, identity_mode=identity_mode)
     print("[Pipeline] Analyse terminée.\n")
 
     print("[Pipeline] Étape 3/5 : Génération de la proposal via Grok...")

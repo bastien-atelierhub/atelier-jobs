@@ -55,7 +55,7 @@ are generated at the same standard as English — full confidence, no simplifica
 Return ONLY the JSON object, no markdown, no explanation."""
 
 
-def analyze_job_offer(scraped_data: dict, profile_md_content: str = "") -> dict:
+def analyze_job_offer(scraped_data: dict, profile_md_content: str = "", identity_mode: str = None) -> dict:
     """
     Envoie le contenu brut à DeepSeek pour analyse structurée.
     Retourne le JSON parsé avec fit_bullets, metadata, apply decision et langue.
@@ -70,10 +70,11 @@ def analyze_job_offer(scraped_data: dict, profile_md_content: str = "") -> dict:
     platform_detected = scraped_data.get("platform", "Other")
 
     profile_section = f"\nBastien's profile for context:\n{profile_md_content}" if profile_md_content else ""
+    identity_section = f"\nForced identity_mode: {identity_mode} — override DeepSeek inference, use this value." if identity_mode else ""
 
     user_message = f"""Platform: {platform_detected}
 URL: {scraped_data.get("source_url", "")}
-
+{identity_section}
 Job offer:
 {raw_content[:8000]}{profile_section}"""
 
