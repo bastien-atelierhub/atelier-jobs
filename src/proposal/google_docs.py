@@ -1,9 +1,9 @@
 """
-Google Docs — crée et formate un document Google Doc via OAuth2 (compte utilisateur)
+Google Docs — crée un document Google Doc formatté, prêt à envoyer
+Contenu : proposal uniquement (pas de métadonnées internes)
 """
 
 import os
-from datetime import date
 
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -11,6 +11,12 @@ from googleapiclient.discovery import build
 
 DOC_URL_BASE = "https://docs.google.com/document/d/{doc_id}/edit"
 GOOGLE_TOKEN_URI = "https://oauth2.googleapis.com/token"
+
+FONT = "Arial"
+FONT_SIZE = 11
+LINE_SPACING = 1.5
+MARGIN = 72  # 1 inch in points
+PARA_SPACE_AFTER = 12
 
 
 def _get_credentials():
@@ -32,57 +38,25 @@ def _get_credentials():
     return creds
 
 
-def _insert_text(requests, text, index):
-    """Ajoute une action insertText et retourne le nouvel index."""
-    requests.append({
-        "insertText": {
-            "location": {"index": index},
-            "text": text,
-        }
-    })
-    return index + len(text)
-
-
-def _style_range(requests, start, end, bold=False, font_size=None, named_style=None, color=None):
-    """Applique un style sur un range de texte."""
-    if named_style:
-        requests.append({
-            "updateParagraphStyle": {
-                "range": {"startIndex": start, "endIndex": end},
-                "paragraphStyle": {"namedStyleType": named_style},
-                "fields": "namedStyleType",
-            }
-        })
-
-    text_style = {}
-    fields = []
-
-    if bold is not None:
-        text_style["bold"] = bold
-        fields.append("bold")
-    if font_size:
-        text_style["fontSize"] = {"magnitude": font_size, "unit": "PT"}
-        fields.append("fontSize")
-    if color:
-        text_style["foregroundColor"] = {"color": {"rgbColor": color}}
-        fields.append("foregroundColor")
-
-    if text_style:
-        requests.append({
-            "updateTextStyle": {
-                "range": {"startIndex": start, "endIndex": end},
-                "textStyle": text_style,
-                "fields": ",".join(fields),
-            }
-        })
+def _split_signature(text: str):
+    """Sépare le corps de la signature (dernière ligne non vide)."""
+    lines = text.rstrip().split("\n")
+    # Cherche la dernière ligne non vide comme signature
+    for i in range(len(lines) - 1, -1, -1):
+        if lines[i].strip():
+            signature = lines[i].strip()
+            body = "\n".join(lines[:i]).rstrip()
+            return body, signature
+    return text, ""
 
 
 def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
     """
-    Crée un Google Doc formatté dans le dossier ATELIER Proposals.
-    Structure : titre, métadonnées, fit analysis, proposal prête à envoyer.
+    Crée un Google Doc contenant uniquement la proposal, formatté et prêt à envoyer.
     Retourne l'URL directe du document.
     """
+    from datetime import date
+
     folder_id = os.environ.get("GOOGLE_PROPOSALS_FOLDER_ID")
     if not folder_id:
         raise Exception("[GoogleDocs] GOOGLE_PROPOSALS_FOLDER_ID manquant.")
@@ -94,14 +68,6 @@ def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
     today = date.today().strftime("%Y-%m-%d")
     job_title = analysis.get("job_title", "Unknown Role")
     company = analysis.get("company", "Unknown Company")
-    platform = analysis.get("platform", "Other")
-    job_type = analysis.get("job_type", "freelance")
-    identity_mode = analysis.get("identity_mode", "freelance")
-    summary = analysis.get("summary", "")
-    fit_bullets = analysis.get("fit_bullets", [])
-    apply_decision = analysis.get("apply", "maybe")
-    apply_reason = analysis.get("apply_reason", "")
-
     doc_title = f"{job_title} — {company} — {today}"
 
     print(f"[GoogleDocs] Création du document : {doc_title}")
@@ -120,74 +86,76 @@ def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
     except Exception as e:
         raise Exception(f"[GoogleDocs] Erreur création document : {e}")
 
-    # Construire le contenu par blocs avec tracking des positions
+    # Séparer corps et signature
+    body_text, signature = _split_signature(proposal)
+
+    # Construire le texte complet : corps + ligne vide + signature
+    full_text = body_text + "\n\n" + signature + "\n"
+
+    # Calculer les positions pour le styling
+    body_end = len(body_text) + 1  # +1 pour l'index Google Docs (commence à 1)
+    sig_start = body_end + 2       # après \n\n
+    sig_end = sig_start + len(signature)
+
     requests = []
-    idx = 1  # Google Docs index starts at 1
 
-    # ── Titre ─────────────────────────────────────────────────────────────────
-    title = f"{job_title} — {company}\n"
-    title_start = idx
-    idx = _insert_text(requests, title, idx)
-    _style_range(requests, title_start, idx - 1, named_style="HEADING_1")
+    # ── Insérer le texte complet ───────────────────────────────────────────────
+    requests.append({
+        "insertText": {
+            "location": {"index": 1},
+            "text": full_text,
+        }
+    })
 
-    # ── Métadonnées ───────────────────────────────────────────────────────────
-    meta = f"{platform} · {job_type} · {identity_mode} · {today}\n"
-    if source_url and source_url != "manual-input":
-        meta += f"{source_url}\n"
-    meta += "\n"
-    meta_start = idx
-    idx = _insert_text(requests, meta, idx)
-    _style_range(requests, meta_start, idx - 1, bold=False, font_size=9,
-                 color={"red": 0.5, "green": 0.5, "blue": 0.5})
+    # ── Police et taille sur tout le doc ──────────────────────────────────────
+    requests.append({
+        "updateTextStyle": {
+            "range": {"startIndex": 1, "endIndex": 1 + len(full_text)},
+            "textStyle": {
+                "weightedFontFamily": {"fontFamily": FONT},
+                "fontSize": {"magnitude": FONT_SIZE, "unit": "PT"},
+            },
+            "fields": "weightedFontFamily,fontSize",
+        }
+    })
 
-    # ── Summary ───────────────────────────────────────────────────────────────
-    if summary:
-        section_start = idx
-        idx = _insert_text(requests, "SUMMARY\n", idx)
-        _style_range(requests, section_start, idx - 1, named_style="HEADING_3")
+    # ── Interligne et espacement paragraphes sur tout le doc ──────────────────
+    requests.append({
+        "updateParagraphStyle": {
+            "range": {"startIndex": 1, "endIndex": 1 + len(full_text)},
+            "paragraphStyle": {
+                "lineSpacing": LINE_SPACING * 100,
+                "spaceAbove": {"magnitude": 0, "unit": "PT"},
+                "spaceBelow": {"magnitude": PARA_SPACE_AFTER, "unit": "PT"},
+            },
+            "fields": "lineSpacing,spaceAbove,spaceBelow",
+        }
+    })
 
-        sum_start = idx
-        idx = _insert_text(requests, f"{summary}\n\n", idx)
-        _style_range(requests, sum_start, idx - 1, bold=False, font_size=10)
+    # ── Marges du document ────────────────────────────────────────────────────
+    requests.append({
+        "updateDocumentStyle": {
+            "documentStyle": {
+                "marginTop":    {"magnitude": MARGIN, "unit": "PT"},
+                "marginBottom": {"magnitude": MARGIN, "unit": "PT"},
+                "marginLeft":   {"magnitude": MARGIN, "unit": "PT"},
+                "marginRight":  {"magnitude": MARGIN, "unit": "PT"},
+            },
+            "fields": "marginTop,marginBottom,marginLeft,marginRight",
+        }
+    })
 
-    # ── Fit Analysis ──────────────────────────────────────────────────────────
-    if fit_bullets:
-        section_start = idx
-        idx = _insert_text(requests, "FIT ANALYSIS\n", idx)
-        _style_range(requests, section_start, idx - 1, named_style="HEADING_3")
+    # ── Signature en italique ─────────────────────────────────────────────────
+    if signature and sig_start < sig_end:
+        requests.append({
+            "updateTextStyle": {
+                "range": {"startIndex": sig_start, "endIndex": sig_end},
+                "textStyle": {"italic": True},
+                "fields": "italic",
+            }
+        })
 
-        for bullet in fit_bullets:
-            b_start = idx
-            idx = _insert_text(requests, f"{bullet}\n", idx)
-            _style_range(requests, b_start, idx - 1, bold=False, font_size=10)
-
-        idx = _insert_text(requests, "\n", idx)
-
-    # ── Apply decision ────────────────────────────────────────────────────────
-    apply_line = f"Apply: {apply_decision}"
-    if apply_reason:
-        apply_line += f" — {apply_reason}"
-    apply_line += "\n\n"
-    apply_start = idx
-    idx = _insert_text(requests, apply_line, idx)
-    _style_range(requests, apply_start, idx - 1, bold=True, font_size=10)
-
-    # ── Séparateur ────────────────────────────────────────────────────────────
-    sep_start = idx
-    idx = _insert_text(requests, "─" * 40 + "\n\n", idx)
-    _style_range(requests, sep_start, idx - 1, bold=False, font_size=9,
-                 color={"red": 0.7, "green": 0.7, "blue": 0.7})
-
-    # ── Proposal ──────────────────────────────────────────────────────────────
-    section_start = idx
-    idx = _insert_text(requests, "PROPOSAL\n", idx)
-    _style_range(requests, section_start, idx - 1, named_style="HEADING_3")
-
-    prop_start = idx
-    idx = _insert_text(requests, f"{proposal}\n", idx)
-    _style_range(requests, prop_start, idx - 1, bold=False, font_size=11)
-
-    # Appliquer tous les changements en une seule requête
+    # Appliquer
     try:
         docs_service.documents().batchUpdate(
             documentId=doc_id,

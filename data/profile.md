@@ -1,4 +1,4 @@
-# BASTIEN JOUBERT — Mission Profile v6
+# BASTIEN JOUBERT — Mission Profile v7
 *Unified profile for ATELIER proposals (freelance) and permanent job applications.*
 *Last updated: June 2026*
 
@@ -101,7 +101,7 @@ Use for: market launch, growth from zero, solo execution, community building, re
 
 Built the Barcelona market from zero. Solo, no marketing team, minimal budget. 1,000+ members in 6 months.
 
-Key context: full Covid lockdowns, curfews at 4pm, streets empty, zero paid media budget. Growth was organic and community-led (Bike Club) with influencer partnerships. This makes the result significantly stronger than the number alone suggests.
+Key context: full Covid lockdowns, curfews at 4pm, zero paid media. Growth was organic and community-led (Bike Club) with influencer partnerships. This makes the result significantly stronger than the number alone suggests.
 
 Mission completed. Voluntary departure end of 2021.
 
@@ -189,11 +189,16 @@ GitHub: github.com/bastien-atelierhub/knowledge-extractor-showcase
 - Google Sheets as operational CMS and database layer
 
 ### Working knowledge
-- AI video tools: Higgsfield, Runway, Kling, Kie.ai
-- ElevenLabs (voice synthesis integration)
+- AI video tools: Runway ML, Kling, Higgsfield, Pika Labs, Kie.ai — used in production for social content
+- ElevenLabs (voice synthesis integration in automated pipelines)
 - Data analysis (reads and interprets dashboards)
 - Python scripting (orchestrates and directs, does not write from scratch)
 - Flutter / Dart (personal project, not client-ready)
+
+### In active development — video specialization
+AI video production is a deliberate direction. Currently building an automated video production pipeline. Proof of concept already live: @goku.ssjn on TikTok, an AI-generated Dragon Ball Z account built solo with no promotion — 2,830 followers and 81,400+ likes. Untouched for 6 months and still growing. New content in production using current generation models (Runway ML, Kling, Higgsfield). This is not a hobby — it is a systematic test of what AI video can do at scale with zero budget.
+
+Use this angle for: video editor roles, AI content production, social media video, creative tech positions. Frame as: "I've already proven the model works. I'm now building the infrastructure to run it at scale."
 
 ---
 
@@ -214,6 +219,7 @@ Never use all of them. Select based on what THIS specific job or brief actually 
 | Solo / freelance execution | ATELIER, Swapfiets single-handed launch |
 | Resilience / constraints | Swapfiets during Covid lockdowns, Hamadryade built on-site in the Amazon |
 | Crypto / Web3 | 6 years XRP/Ripple ecosystem, infrastructure thesis, community building |
+| AI video production | @goku.ssjn TikTok: 2,830 followers, 81.4K likes, zero paid media, zero promotion, AI-generated solo |
 | Naming / brand identity | Nūrun (live Saudi company, 3 verticals), OKO Club, Almara Maison |
 | Multilingual copywriting | Hamadryade Lodge (EN/FR/ES), proposals in FR/EN/ES |
 
@@ -238,6 +244,9 @@ Never use all of them. Select based on what THIS specific job or brief actually 
 
 ### The team returnee (permanent mode only)
 "I've had full ownership for years. I know what it costs and what it produces. I'm not coming back to an office to escape something — I'm coming to apply everything I built alone, inside a team that can actually use it."
+
+### The AI video proof of concept
+"I built a Dragon Ball Z TikTok account solo with AI-generated video, zero paid media, zero promotion. 2,830 followers and 81,400 likes. I haven't touched it in 6 months. I'm now building the pipeline to do this at scale, with current-generation models. The account is proof the content works. The pipeline is what makes it repeatable."
 
 ### The pattern reader
 "My brain connects things that aren't supposed to connect. Nike brand logic, AI systems, financial infrastructure, community mechanics. The lateral thinking is the product."
@@ -355,6 +364,6 @@ Works best with clear objectives and full autonomy on execution. No micromanagem
 
 ---
 
-*BASTIEN JOUBERT — Mission Profile v6 — June 2026*
+*BASTIEN JOUBERT — Mission Profile v7 — June 2026*
 *Single source of truth for ATELIER proposals (freelance) and permanent job applications.*
 *identity_mode field controls output framing. See Section 00.*
