@@ -9,8 +9,12 @@ import openai
 GROK_MODEL = "grok-4.3"
 GROK_BASE_URL = "https://api.x.ai/v1"
 # ANTHROPIC_MODEL = "claude-sonnet-4-6"  # kept for easy rollback
-MAX_TOKENS = 1024
-TEMPERATURE = 1.0  # Anthropic API uses default temperature
+MAX_TOKENS = 1400
+TEMPERATURE = 0.9
+
+# Contexte humain — qui est Bastien comme travailleur, pas ses credentials.
+# Le modèle écrit DEPUIS ce contexte. Ce texte n'apparaît jamais dans la lettre.
+WORKER_CONTEXT = """Bastien thinks in systems before he thinks in tasks. He gets bored fast when the problem is already solved — he needs to be building something, not maintaining it. He works best alone or with one or two people he trusts completely. He has no patience for slow decisions or meetings that replace thinking. He finds most briefs underambitious and will quietly exceed them. He is drawn to projects that feel slightly too big for one person. He has learned everything important by doing it wrong first. He does not separate work from curiosity — if something interests him, he goes deep, whether it's on the clock or not."""
 
 FORBIDDEN_WORDS = [
     "passionate", "leverage", "end-to-end solutions", "reach out", "synergies",
@@ -101,7 +105,19 @@ or launch under constraints: add one sentence about the Covid lockdown context
 
 ── VOICE ─────────────────────────────────────────────────────────────────────
 
-Bold, direct, precise. Short sentences. No fluff.
+This letter should read like it was written by a specific person with a real
+history — not generated. Warm confidence, not cold efficiency. The writing can
+breathe. There is weight behind it: Nike, four continents, building things alone,
+learning everything the hard way. That weight is present without being stated.
+
+Short sentences are a tool, not a religion. When in doubt: less punchy, more human.
+A letter made of clipped three-word sentences sounds like a machine trying to sound
+confident. Vary the rhythm. Let some sentences run longer when the thought needs it.
+
+Direct, but not blunt. Confident without posturing. Dry, occasionally provocative —
+he says what others won't. The personality should come through in word choice and
+in what he chooses to notice, not in punctuation tricks.
+
 NEVER use: passionate, leverage, end-to-end, reach out, synergies, journey,
 excited to, love to, help you achieve, full potential, innovative solutions,
 cutting-edge, we'd love to.
@@ -150,7 +166,7 @@ def generate_proposal(analysis: dict, raw_content: str, profile_md_content: str 
 
     platform = analysis.get("platform", "Other")
     language = analysis.get("language", "en")
-    identity_mode = analysis.get("identity_mode", "atelier")
+    identity_mode = analysis.get("identity_mode", "freelance")
     job_title = analysis.get("job_title", "Unknown Role")
     company = analysis.get("company", "Unknown Company")
     summary = analysis.get("summary", "")
@@ -159,29 +175,33 @@ def generate_proposal(analysis: dict, raw_content: str, profile_md_content: str 
     key_requirements = analysis.get("key_requirements", [])
     relevant_proof_points = analysis.get("relevant_proof_points", [])
 
-    key_reqs_str = "\n".join(f"- {r}" for r in key_requirements) if key_requirements else "Not specified"
-    proof_points_str = "\n".join(f"- {p}" for p in relevant_proof_points) if relevant_proof_points else "Not specified"
-    profile_section = f"\nBastien's full profile:\n{profile_md_content}" if profile_md_content else ""
+    # Proof points en prose narrative, pas en bullet list — sinon Grok bullettise la lettre
+    if relevant_proof_points:
+        proof_points_str = " ".join(p.rstrip(".") + "." for p in relevant_proof_points)
+    else:
+        proof_points_str = "Not specified — select the most relevant from the profile below."
+    key_reqs_str = "; ".join(key_requirements) if key_requirements else "Not specified"
+    profile_section = f"\n\n--- BASTIEN'S FULL PROFILE (reference for everything) ---\n{profile_md_content}" if profile_md_content else ""
 
-    user_message = f"""Job offer:
+    user_message = f"""Who Bastien is, as a worker — write FROM this, never quote it:
+{WORKER_CONTEXT}
+
+Now here is the offer he just read:
 {raw_content[:6000]}
 
-Analysis results:
+What you know about this role:
 - Company: {company}
 - Role: {job_title}
-- Summary: {summary}
+- What they really need: {summary}
 - Role type: {role_type}
-- Identity mode: {identity_mode}
-- Key requirements:
-{key_reqs_str}
-- Relevant proof points:
+- Platform: {platform} | Job type: {job_type} | Identity mode: {identity_mode} | Language: {language}
+- Key requirements: {key_reqs_str}
+
+The proof points that fit this role (weave them in naturally, do not list them):
 {proof_points_str}
-- Platform: {platform}
-- Language: {language}
-- Job type: {job_type}
 {profile_section}
 
-Write the proposal now."""
+Write the proposal now. Start from his reaction to the offer, not from his resume."""
 
     print(f"[ProposalGenerator] Génération via Grok ({platform} / {language} / {identity_mode})...")
 
@@ -189,6 +209,7 @@ Write the proposal now."""
         response = client.chat.completions.create(
             model=GROK_MODEL,
             max_tokens=MAX_TOKENS,
+            temperature=TEMPERATURE,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_message},
