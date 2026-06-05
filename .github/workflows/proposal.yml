@@ -53,7 +53,7 @@ jobs:
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           GOOGLE_PROPOSALS_FOLDER_ID: ${{ secrets.GOOGLE_PROPOSALS_FOLDER_ID }}
           GOOGLE_SHEET_ROW_INDEX: ${{ github.event.inputs.row_index }}
-          GOOGLE_SPREADSHEET_ID: ${{ github.event.inputs.spreadsheet_id }}
+          GOOGLE_SPREADSHEET_ID: ${{ github.event.inputs.spreadsheet_id || secrets.GOOGLE_SHEET_ID }}
           IDENTITY_MODE: ${{ github.event.inputs.identity_mode }}
         run: |
           cd src/proposal && python main.py "${{ github.event.inputs.content }}"

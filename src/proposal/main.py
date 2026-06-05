@@ -11,7 +11,7 @@ from scraper import scrape_job_offer
 from analyzer import analyze_job_offer
 from proposal_generator import generate_proposal
 from google_docs import create_proposal_doc
-from sheets import write_proposal_link
+from sheets import write_proposal_link, upsert_proposal_row
 from telegram_sender import send_proposal_notification, send_error_notification
 
 PROFILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "profile.md")
@@ -77,12 +77,15 @@ def run(raw_input: str) -> None:
     google_doc_url = create_proposal_doc(analysis, proposal, source_url)
     print("[Pipeline] Google Doc créé.\n")
 
-    # Write-back du lien doc dans le Google Sheet (optionnel)
+    # Write-back dans le Google Sheet
     row_index_str = os.environ.get("GOOGLE_SHEET_ROW_INDEX", "").strip()
     spreadsheet_id = os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip()
-    if row_index_str and spreadsheet_id:
+    if spreadsheet_id:
         try:
-            write_proposal_link(spreadsheet_id, int(row_index_str), google_doc_url)
+            if row_index_str:
+                write_proposal_link(spreadsheet_id, int(row_index_str), google_doc_url)
+            else:
+                upsert_proposal_row(spreadsheet_id, analysis, google_doc_url, source_url)
         except Exception as e:
             print(f"[Pipeline] Write-back Sheet ignoré : {e}")
 

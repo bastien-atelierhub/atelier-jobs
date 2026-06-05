@@ -1,9 +1,10 @@
 """
-Google Docs — crée un document Google Doc formatté, prêt à envoyer
-Contenu : proposal uniquement (pas de métadonnées internes)
+Google Docs — crée une lettre professionnelle formatée, prête à envoyer
+Structure : en-tête Bastien / date / company / proposal / signature italique
 """
 
 import os
+from datetime import date
 
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -15,8 +16,27 @@ GOOGLE_TOKEN_URI = "https://oauth2.googleapis.com/token"
 FONT = "Arial"
 FONT_SIZE = 11
 LINE_SPACING = 1.5
-MARGIN = 72  # 1 inch in points
+MARGIN = 71  # ~2.5cm in points
 PARA_SPACE_AFTER = 12
+
+MONTHS_FR = [
+    "", "janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+]
+MONTHS_ES = [
+    "", "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+]
+
+
+def _format_date(language: str) -> str:
+    today = date.today()
+    if language == "fr":
+        return f"{today.day} {MONTHS_FR[today.month]} {today.year}"
+    elif language == "es":
+        return f"{today.day} de {MONTHS_ES[today.month]} de {today.year}"
+    else:
+        return today.strftime("%B %-d, %Y")
 
 
 def _get_credentials():
@@ -41,22 +61,46 @@ def _get_credentials():
 def _split_signature(text: str):
     """Sépare le corps de la signature (dernière ligne non vide)."""
     lines = text.rstrip().split("\n")
-    # Cherche la dernière ligne non vide comme signature
     for i in range(len(lines) - 1, -1, -1):
         if lines[i].strip():
-            signature = lines[i].strip()
-            body = "\n".join(lines[:i]).rstrip()
-            return body, signature
+            return "\n".join(lines[:i]).rstrip(), lines[i].strip()
     return text, ""
+
+
+def _txt(requests, text, idx):
+    """Insère du texte et retourne le nouvel index."""
+    requests.append({"insertText": {"location": {"index": idx}, "text": text}})
+    return idx + len(text)
+
+
+def _style_text(requests, start, end, bold=False, italic=False, font_size=None):
+    style = {}
+    fields = []
+    if bold is not None:
+        style["bold"] = bold
+        fields.append("bold")
+    if italic:
+        style["italic"] = True
+        fields.append("italic")
+    if font_size:
+        style["fontSize"] = {"magnitude": font_size, "unit": "PT"}
+        fields.append("fontSize")
+    if style:
+        requests.append({
+            "updateTextStyle": {
+                "range": {"startIndex": start, "endIndex": end},
+                "textStyle": style,
+                "fields": ",".join(fields),
+            }
+        })
 
 
 def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
     """
-    Crée un Google Doc contenant uniquement la proposal, formatté et prêt à envoyer.
+    Crée un Google Doc formatté comme une vraie lettre professionnelle.
+    Structure : Bastien Joubert / date / company / proposal / signature italique.
     Retourne l'URL directe du document.
     """
-    from datetime import date
-
     folder_id = os.environ.get("GOOGLE_PROPOSALS_FOLDER_ID")
     if not folder_id:
         raise Exception("[GoogleDocs] GOOGLE_PROPOSALS_FOLDER_ID manquant.")
@@ -65,14 +109,19 @@ def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
     docs_service = build("docs", "v1", credentials=credentials)
     drive_service = build("drive", "v3", credentials=credentials)
 
-    today = date.today().strftime("%Y-%m-%d")
+    today_str = date.today().strftime("%Y-%m-%d")
     job_title = analysis.get("job_title", "Unknown Role")
-    company = analysis.get("company", "Unknown Company")
-    doc_title = f"{job_title} — {company} — {today}"
+    company = analysis.get("company", "")
+    language = analysis.get("language", "en")
+    identity_mode = analysis.get("identity_mode", "freelance")
 
+    # Signature selon identity_mode
+    signature_text = "Bastien Joubert — ATELIER" if identity_mode == "freelance" else "Bastien Joubert"
+
+    doc_title = f"{job_title} — {company or 'Unknown'} — {today_str}"
     print(f"[GoogleDocs] Création du document : {doc_title}")
 
-    # Créer le doc dans le dossier cible
+    # Créer le doc
     try:
         doc = drive_service.files().create(
             body={
@@ -86,40 +135,44 @@ def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
     except Exception as e:
         raise Exception(f"[GoogleDocs] Erreur création document : {e}")
 
-    # Séparer corps et signature
-    body_text, signature = _split_signature(proposal)
+    # Séparer corps et signature Grok (on utilise la nôtre à la place)
+    body_text, _ = _split_signature(proposal)
 
-    # Construire le texte complet : corps + ligne vide + signature
-    full_text = body_text + "\n\n" + signature + "\n"
+    # Construire le contenu bloc par bloc
+    formatted_date = _format_date(language)
 
-    # Calculer les positions pour le styling
-    body_end = len(body_text) + 1  # +1 pour l'index Google Docs (commence à 1)
-    sig_start = body_end + 2       # après \n\n
-    sig_end = sig_start + len(signature)
+    # En-tête
+    header = f"Bastien Joubert\n\n{formatted_date}\n"
+    if company and company.lower() not in ("unknown", "unknown company"):
+        header += f"\n{company}\n"
+    header += "\n\n"
+
+    # Signature finale
+    sig = f"\n\n{signature_text}\n"
+
+    full_text = header + body_text + sig
 
     requests = []
+    idx = 1
 
-    # ── Insérer le texte complet ───────────────────────────────────────────────
-    requests.append({
-        "insertText": {
-            "location": {"index": 1},
-            "text": full_text,
-        }
-    })
+    # ── Insérer tout le texte ─────────────────────────────────────────────────
+    requests.append({"insertText": {"location": {"index": 1}, "text": full_text}})
 
-    # ── Police et taille sur tout le doc ──────────────────────────────────────
+    # ── Police + taille sur tout le doc ──────────────────────────────────────
     requests.append({
         "updateTextStyle": {
             "range": {"startIndex": 1, "endIndex": 1 + len(full_text)},
             "textStyle": {
                 "weightedFontFamily": {"fontFamily": FONT},
                 "fontSize": {"magnitude": FONT_SIZE, "unit": "PT"},
+                "bold": False,
+                "italic": False,
             },
-            "fields": "weightedFontFamily,fontSize",
+            "fields": "weightedFontFamily,fontSize,bold,italic",
         }
     })
 
-    # ── Interligne et espacement paragraphes sur tout le doc ──────────────────
+    # ── Interligne + espacement paragraphes ───────────────────────────────────
     requests.append({
         "updateParagraphStyle": {
             "range": {"startIndex": 1, "endIndex": 1 + len(full_text)},
@@ -132,7 +185,7 @@ def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
         }
     })
 
-    # ── Marges du document ────────────────────────────────────────────────────
+    # ── Marges ────────────────────────────────────────────────────────────────
     requests.append({
         "updateDocumentStyle": {
             "documentStyle": {
@@ -145,15 +198,14 @@ def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
         }
     })
 
-    # ── Signature en italique ─────────────────────────────────────────────────
-    if signature and sig_start < sig_end:
-        requests.append({
-            "updateTextStyle": {
-                "range": {"startIndex": sig_start, "endIndex": sig_end},
-                "textStyle": {"italic": True},
-                "fields": "italic",
-            }
-        })
+    # ── "Bastien Joubert" en-tête en gras ─────────────────────────────────────
+    name_end = 1 + len("Bastien Joubert")
+    _style_text(requests, 1, name_end, bold=True)
+
+    # ── Signature finale en italique ─────────────────────────────────────────
+    sig_start = 1 + len(header) + len(body_text) + 2  # après \n\n
+    sig_end = sig_start + len(signature_text)
+    _style_text(requests, sig_start, sig_end, italic=True)
 
     # Appliquer
     try:
@@ -166,5 +218,4 @@ def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
 
     doc_url = DOC_URL_BASE.format(doc_id=doc_id)
     print(f"[GoogleDocs] Document créé : {doc_url}")
-
     return doc_url

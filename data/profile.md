@@ -1,4 +1,4 @@
-# BASTIEN JOUBERT — Mission Profile v7
+# BASTIEN JOUBERT — Mission Profile v8
 *Unified profile for ATELIER proposals (freelance) and permanent job applications.*
 *Last updated: June 2026*
 
@@ -45,7 +45,27 @@ A French creative and AI operator who went from Nike Europe brand architect to b
 
 ---
 
-## 02. LANGUAGES
+## 02. GEOGRAPHIC POSITIONING — WHEN AND HOW TO USE IT
+
+**On Upwork posts with budgets under $25k/year or $50/hr:**
+Mention it explicitly. Not as an excuse — as a commercial argument.
+
+Frame: "French, based in South America (Paraguay), LLC registered in the US for seamless payment. Senior-level experience at a cost structure that makes sense for your budget."
+
+This is honest and it works. These companies are looking for exactly this profile — they just can't say it in the job post.
+
+**On premium freelance or permanent roles ($50k+/year, LinkedIn, institutional):**
+Never mention it. It plays against the positioning.
+
+**Practical details for the pipeline:**
+- LLC registered in New Mexico (US)
+- Invoices in USD
+- Payments via US bank account — zero friction for US or international clients
+- European clients: EUR invoicing possible but not yet tested — flag if needed
+
+---
+
+## 03. LANGUAGES
 
 - French: native
 - Spanish: fluent — 10 years in Latin America (Colombia, Ecuador, Barcelona). Full working language. NOT limited working proficiency. Use Spanish proposals confidently for LatAm and Spanish clients.
@@ -54,7 +74,11 @@ A French creative and AI operator who went from Nike Europe brand architect to b
 
 ---
 
-## 03. VOICE
+## 04. VOICE
+
+The proposals should feel like they were written by a specific person with a history — not generated. There is a story behind every application: Nike, four continents, building things alone, learning everything the hard way. That weight should be present without being stated directly. Warm confidence, not cold efficiency. The writing can breathe a little.
+
+When in doubt: less punchy, more human. Short sentences are a tool, not a religion.
 
 - Direct. No hedging.
 - Short sentences. Short paragraphs.
@@ -69,7 +93,7 @@ DO: direct statements, specific numbers, honest framing of what I bring and what
 
 ---
 
-## 04. BACKGROUND
+## 05. BACKGROUND
 
 ### Nike — 4 years, Paris then Amsterdam (2012–2016)
 
@@ -163,7 +187,7 @@ GitHub: github.com/bastien-atelierhub/knowledge-extractor-showcase
 
 ---
 
-## 05. SKILLS — HONEST STACK
+## 06. SKILLS — HONEST STACK
 
 ### Strong — leads and delivers alone
 - Brand strategy and positioning
@@ -181,9 +205,17 @@ GitHub: github.com/bastien-atelierhub/knowledge-extractor-showcase
 - Community building and brand activations
 - Naming strategy
 
+### Design — self-taught, production-grade
+Bastien has been designing for clients since 2020. Not formally trained — but he built his eye at Nike Europe, working daily alongside the best creative teams Nike had in Europe, and has been practicing on real client work ever since. Primary tool is Figma: vectoriel, brand systems, UI, everything. Pixelmator for photo retouching. Affinity for file extraction when needed. Does not use Illustrator — deliberately moved on. Portfolio on Contra: Nūrun, OKO Club, Almara Maison, Skunkerz, Hamadryade Lodge.
+
+For smaller projects, delivers solo. For larger ones, works with Julian — a senior Colombian designer he's known since Isobar Medellín in 2018. They've collaborated on most of the portfolio projects. Bastien art directs at 60-70%, Julian elevates the execution. Both on Figma. Available at any hour.
+
+On premium ATELIER briefs: "flexible studio structure with a senior designer on call" is a valid framing.
+On small-budget Upwork posts: present as solo. Do not mention Julian.
+
 ### Solid — executes with minimal support
 - SEO (technical + content strategy)
-- UX/UI direction (not a designer — directs design with precision)
+- Graphic design: Figma (primary), Pixelmator, Affinity — brand identities, social assets, UI, web
 - Meta Ads, Google Ads (strategy + setup)
 - Market launch strategy (new market entry, go-to-market)
 - Google Sheets as operational CMS and database layer
@@ -202,7 +234,7 @@ Use this angle for: video editor roles, AI content production, social media vide
 
 ---
 
-## 06. PROOF POINTS — SELECT 2–3 MAX PER OUTPUT
+## 07. PROOF POINTS — SELECT 2–3 MAX PER OUTPUT
 
 Never use all of them. Select based on what THIS specific job or brief actually needs.
 
@@ -221,11 +253,13 @@ Never use all of them. Select based on what THIS specific job or brief actually 
 | Crypto / Web3 | 6 years XRP/Ripple ecosystem, infrastructure thesis, community building |
 | AI video production | @goku.ssjn TikTok: 2,830 followers, 81.4K likes, zero paid media, zero promotion, AI-generated solo |
 | Naming / brand identity | Nūrun (live Saudi company, 3 verticals), OKO Club, Almara Maison |
+| Graphic design / visual identity | Nūrun, OKO Club, Skunkerz, Almara — all on Contra portfolio. Figma-native. Self-taught since 2020, eye built at Nike. |
+| Small budget / high value | French in Paraguay, LLC in US, senior profile at entry-level cost — explicit argument on Upwork sub-$25k posts |
 | Multilingual copywriting | Hamadryade Lodge (EN/FR/ES), proposals in FR/EN/ES |
 
 ---
 
-## 07. NARRATIVE ANGLES
+## 08. NARRATIVE ANGLES
 
 ### The Covid launch
 "I launched Swapfiets in Barcelona during full Covid lockdowns — curfews at 4pm, streets empty, zero paid media budget. 1,000 members in 6 months. Community-first, not campaign-first."
@@ -253,7 +287,7 @@ Never use all of them. Select based on what THIS specific job or brief actually 
 
 ---
 
-## 08. PERMANENT MODE — ADDITIONAL RULES
+## 09. PERMANENT MODE — ADDITIONAL RULES
 
 *Only applies when identity_mode = permanent.*
 
@@ -290,7 +324,7 @@ Works best with clear objectives and full autonomy on execution. No micromanagem
 
 ---
 
-## 09. WHAT I DON'T DO
+## 10. WHAT I DON'T DO
 
 - No traditional PR or media buying
 - No physical event logistics or production
@@ -302,7 +336,7 @@ Works best with clear objectives and full autonomy on execution. No micromanagem
 
 ---
 
-## 10. PLATFORM RULES
+## 11. PLATFORM RULES
 
 ### Upwork / Contra / Wellfound
 - identity_mode: `freelance`
@@ -325,7 +359,7 @@ Works best with clear objectives and full autonomy on execution. No micromanagem
 
 ---
 
-## 11. CLOSING RULES
+## 12. CLOSING RULES
 
 - Sign: "Bastien Joubert" or "Bastien Joubert — ATELIER" per platform rule above
 - Never: "Looking forward to hearing from you", "Best regards", "Kind regards"
@@ -334,7 +368,7 @@ Works best with clear objectives and full autonomy on execution. No micromanagem
 
 ---
 
-## 12. RED FLAGS — GENERATE BUT FLAG
+## 13. RED FLAGS — GENERATE BUT FLAG
 
 - Budget below $500 project or $80/hr (freelance)
 - Salary below 1,200 EUR/month net (permanent)
@@ -347,7 +381,7 @@ Works best with clear objectives and full autonomy on execution. No micromanagem
 
 ---
 
-## 13. WHAT STAYS INTERNAL — NEVER IN ANY OUTPUT
+## 14. WHAT STAYS INTERNAL — NEVER IN ANY OUTPUT
 
 *This section exists so the AI knows what to reframe, not what to reveal.*
 
@@ -364,6 +398,6 @@ Works best with clear objectives and full autonomy on execution. No micromanagem
 
 ---
 
-*BASTIEN JOUBERT — Mission Profile v7 — June 2026*
+*BASTIEN JOUBERT — Mission Profile v8 — June 2026*
 *Single source of truth for ATELIER proposals (freelance) and permanent job applications.*
 *identity_mode field controls output framing. See Section 00.*
