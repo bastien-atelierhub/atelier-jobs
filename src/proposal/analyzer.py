@@ -58,8 +58,16 @@ For "relevant_proof_points" — follow this order:
    to solve.
 2. Then select 2-3 proof points from Bastien's profile that address THAT tension
    directly. Explain the mapping (which experience → which part of the tension).
-3. If no proof point clearly addresses the tension, write exactly:
-   "none obvious — use narrative angle instead" — do NOT force a weak match.
+3. "none obvious — use narrative angle instead" is a LAST RESORT, not a default.
+   Before using it, scan the profile's proof point table (section 08) for the row
+   matching this role_type. There is almost always a match:
+   - design / graphic / visual / branding role → Nūrun, OKO Club, Skunkerz, Almara (Contra portfolio)
+   - web / development → Antigravity builds, Almara, Hamadryade
+   - AI / automation → proposal engine, social engine, job pipeline
+   - content / copy / social → ATELIER content work, multilingual copywriting
+   - video → @goku.ssjn TikTok
+   Only write "none obvious" if the role is genuinely outside everything in the profile.
+   For a creative, marketing, design, web, AI, or content role, you must find a match.
 4. Swapfiets is NEVER the first proof point. It is a support proof point, used ONLY
    when the offer explicitly mentions launch from zero, community building, or solo
    execution under constraints. For any other context, ignore it entirely.

@@ -191,17 +191,20 @@ def generate_proposal(analysis: dict, raw_content: str, profile_md_content: str 
     key_requirements = analysis.get("key_requirements", [])
     relevant_proof_points = analysis.get("relevant_proof_points", [])
 
-    # Proof points en prose narrative, pas en bullet list — sinon Grok bullettise la lettre
-    joined_pp = " ".join(relevant_proof_points).lower()
-    if not relevant_proof_points or "none obvious" in joined_pp:
+    # Filtrer les entrées "none obvious" — elles ne sont pas des proof points,
+    # juste le signal de DeepSeek qu'il n'a pas trouvé de match. On garde les vrais
+    # proof points (ex: positionnement géographique ajouté par l'analyzer).
+    real_proof_points = [p for p in relevant_proof_points if "none obvious" not in p.lower()]
+
+    if real_proof_points:
+        proof_points_str = " ".join(p.rstrip(".") + "." for p in real_proof_points)
+    else:
         proof_points_str = (
             "No proof point maps cleanly to this role. Do NOT force one. "
             "Instead, draw on a narrative angle from the profile (section 09) that "
             "fits the tone of this offer, or speak directly to the core tension without "
             "a headline credential."
         )
-    else:
-        proof_points_str = " ".join(p.rstrip(".") + "." for p in relevant_proof_points)
     key_reqs_str = "; ".join(key_requirements) if key_requirements else "Not specified"
     profile_section = f"\n\n--- BASTIEN'S FULL PROFILE (reference for everything) ---\n{profile_md_content}" if profile_md_content else ""
 
