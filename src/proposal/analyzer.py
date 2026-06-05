@@ -9,7 +9,7 @@ from openai import OpenAI
 
 DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
 DEEPSEEK_MODEL = "deepseek-chat"
-MAX_TOKENS = 1500
+MAX_TOKENS = 2000
 TEMPERATURE = 0.3
 
 
@@ -24,6 +24,7 @@ All decisions — proof point selection, fit assessment, identity mode — must 
 Analyze the job offer and return ONLY a valid JSON with this exact structure:
 
 {{
+  "core_tension": "<the one real problem they are trying to solve — not the role_type, not the requirements. What is actually keeping them up at night that made them write this post?>",
   "fit_bullets": [
     "✅ <specific positive — reference actual skills or experience from the offer>",
     "✅ <specific positive>",
@@ -39,7 +40,7 @@ Analyze the job offer and return ONLY a valid JSON with this exact structure:
   "language": "<fr|en|es|it>",
   "identity_mode": "<freelance|permanent>",
   "key_requirements": ["<req1>", "<req2>", "<req3>"],
-  "relevant_proof_points": ["<which of Bastien's experiences are most relevant and why>"],
+  "relevant_proof_points": ["<which of Bastien's experiences address the core tension, and why>"],
   "budget_signal": "<premium|mid|low|unknown>",
   "apply": "<yes|maybe|no>",
   "apply_reason": "<one sentence honest reason>"
@@ -51,13 +52,20 @@ For "identity_mode":
 - "freelance" → Upwork, Contra, freelance platforms, project/mission posts, LinkedIn contract roles
 - "permanent" → LinkedIn permanent employment offers, CDI, full-time roles
 
-For "relevant_proof_points":
-- Select from Bastien's actual profile above — do not invent or generalize
-- Explain which specific experience maps to what this offer needs
-- Example: "Swapfiets solo launch → they need someone who can execute independently without a team"
-- 2–3 maximum. Quality over quantity.
-- If budget_signal is "low" and platform is "Upwork", always add this proof point:
-  "Geographic positioning — French in Paraguay, LLC in the US, senior profile at entry-level cost. Mention explicitly in the proposal."
+For "relevant_proof_points" — follow this order:
+1. First, fill "core_tension": identify in one sentence the real problem behind this
+   offer. Not the role_type, not the requirements. The actual thing they are trying
+   to solve.
+2. Then select 2-3 proof points from Bastien's profile that address THAT tension
+   directly. Explain the mapping (which experience → which part of the tension).
+3. If no proof point clearly addresses the tension, write exactly:
+   "none obvious — use narrative angle instead" — do NOT force a weak match.
+4. Swapfiets is NEVER the first proof point. It is a support proof point, used ONLY
+   when the offer explicitly mentions launch from zero, community building, or solo
+   execution under constraints. For any other context, ignore it entirely.
+5. If budget_signal is "low" and platform is "Upwork", always add this proof point:
+   "Geographic positioning — French in Paraguay, LLC in the US, senior profile at
+   entry-level cost. Mention explicitly in the proposal."
 
 For "language": detect the primary language of the job offer (title + description).
 Return "fr" for French, "en" for English, "es" for Spanish, "it" for Italian.
@@ -128,6 +136,7 @@ Job offer:
             raise Exception(f"[Analyzer] JSON invalide retourné par DeepSeek : {e}\nRéponse : {raw_response}")
 
     # Valeurs par défaut
+    analysis.setdefault("core_tension", "")
     analysis.setdefault("fit_bullets", [])
     analysis.setdefault("job_type", "freelance")
     analysis.setdefault("role_type", "other")

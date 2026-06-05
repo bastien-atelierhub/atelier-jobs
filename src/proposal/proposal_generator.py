@@ -170,16 +170,23 @@ def generate_proposal(analysis: dict, raw_content: str, profile_md_content: str 
     job_title = analysis.get("job_title", "Unknown Role")
     company = analysis.get("company", "Unknown Company")
     summary = analysis.get("summary", "")
+    core_tension = analysis.get("core_tension", "")
     role_type = analysis.get("role_type", "other")
     job_type = analysis.get("job_type", "freelance")
     key_requirements = analysis.get("key_requirements", [])
     relevant_proof_points = analysis.get("relevant_proof_points", [])
 
     # Proof points en prose narrative, pas en bullet list — sinon Grok bullettise la lettre
-    if relevant_proof_points:
-        proof_points_str = " ".join(p.rstrip(".") + "." for p in relevant_proof_points)
+    joined_pp = " ".join(relevant_proof_points).lower()
+    if not relevant_proof_points or "none obvious" in joined_pp:
+        proof_points_str = (
+            "No proof point maps cleanly to this role. Do NOT force one. "
+            "Instead, draw on a narrative angle from the profile (section 09) that "
+            "fits the tone of this offer, or speak directly to the core tension without "
+            "a headline credential."
+        )
     else:
-        proof_points_str = "Not specified — select the most relevant from the profile below."
+        proof_points_str = " ".join(p.rstrip(".") + "." for p in relevant_proof_points)
     key_reqs_str = "; ".join(key_requirements) if key_requirements else "Not specified"
     profile_section = f"\n\n--- BASTIEN'S FULL PROFILE (reference for everything) ---\n{profile_md_content}" if profile_md_content else ""
 
@@ -188,6 +195,10 @@ def generate_proposal(analysis: dict, raw_content: str, profile_md_content: str 
 
 Now here is the offer he just read:
 {raw_content[:6000]}
+
+The core tension behind this offer — the real problem they are trying to solve.
+Build the letter around this, not around the requirements list:
+{core_tension or summary}
 
 What you know about this role:
 - Company: {company}
