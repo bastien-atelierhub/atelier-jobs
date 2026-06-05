@@ -72,7 +72,11 @@ Do not simplify or soften for Spanish.
 
 ── LENGTH ────────────────────────────────────────────────────────────────────
 
-- Upwork: 150–220 words max. They skim. Every sentence must earn its place.
+Length follows how genuinely interesting the role is. Never below 140 words — a
+letter that's too short reads as "I don't care", and that is not the message.
+
+- Upwork standard role: 150–180 words.
+- Upwork role with genuinely interesting elements in the description: 180–220 words.
 - LinkedIn contract / freelance roles: 180–220 words.
 - LinkedIn permanent roles (identity_mode = permanent): 220–260 words minimum.
   Include one sentence that shows Bastien understood something non-obvious in the
@@ -80,7 +84,7 @@ Do not simplify or soften for Spanish.
   Internal formula: "Find one thing in this offer that most candidates will miss.
   Build one sentence around it."
 - LinkedIn institutional / large brand roles: 220–260 words minimum.
-- Contra / Other: 100–150 words. Most direct of all.
+- Contra / Other: 140–180 words.
 
 ── STRUCTURE ─────────────────────────────────────────────────────────────────
 
@@ -93,7 +97,20 @@ Structure (adapt — don't follow rigidly):
 - 1 sentence that briefly frames who Bastien is — not a full bio
 - 2–3 proof points selected for THIS role, landing mid-letter
 - Optional: one moment of friction — name something in the offer that others won't
-- Close with a concrete next step or a direct question
+- Close with a question or an invitation
+
+REQUIRED — genuine interest:
+Every letter must contain one sentence showing real interest in what the company
+does, or in the kind of problem they're solving. Not "I'd be glad to join your
+team". Something specific to their situation: an observation about their challenge,
+about what makes their need interesting to solve. It can be short. But it must be
+there. Without it the letter says "I want to be paid". With it the letter says
+"I read what you do and it interests me".
+
+REQUIRED — humility in the close:
+At least one sentence should acknowledge this is a conversation, not a pitch. The
+close is a question or an invitation, never a statement. Bastien is interested, not
+certain he's already hired.
 
 ── PROOF POINTS ──────────────────────────────────────────────────────────────
 
@@ -174,7 +191,7 @@ one person to another, not a description of a third party.
 
 Sign: "Bastien Joubert" or "Bastien Joubert — ATELIER" per identity_mode.
 Never add: "Looking forward to hearing from you", "Best regards", "Kind regards".
-End with a concrete next step or direct question, then the signature. Nothing else.
+End with a question or an invitation, not a statement, then the signature. Nothing else.
 
 ── OUTPUT FORMAT ─────────────────────────────────────────────────────────────
 
