@@ -17,7 +17,7 @@ FONT = "Arial"
 FONT_SIZE = 11
 LINE_SPACING = 1.5
 MARGIN = 71  # ~2.5cm in points
-PARA_SPACE_AFTER = 12
+PARA_SPACE_AFTER = 6
 
 MONTHS_FR = [
     "", "janvier", "février", "mars", "avril", "mai", "juin",

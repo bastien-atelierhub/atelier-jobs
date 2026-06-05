@@ -163,6 +163,17 @@ Job offer:
     elif mode == "bastien_permanent":
         analysis["identity_mode"] = "permanent"
 
-    print(f"[Analyzer] {analysis['job_title']} @ {analysis['company']} | Apply: {analysis['apply']} | Lang: {analysis['language']} | Mode: {analysis['identity_mode']}")
+    # Garantie déterministe : proof point géographique sur Upwork low-budget,
+    # même si DeepSeek a oublié de l'ajouter.
+    geo_pp = ("Geographic positioning — French in Paraguay, LLC in the US, senior "
+              "profile at entry-level cost. Mention explicitly in the proposal.")
+    if analysis["budget_signal"] == "low" and analysis["platform"] == "Upwork":
+        already = any("geographic" in str(p).lower() or "paraguay" in str(p).lower()
+                      for p in analysis["relevant_proof_points"])
+        if not already:
+            analysis["relevant_proof_points"].append(geo_pp)
+            print("[Analyzer] Proof point géographique ajouté (Upwork low-budget)")
+
+    print(f"[Analyzer] {analysis['job_title']} @ {analysis['company']} | Apply: {analysis['apply']} | Lang: {analysis['language']} | Mode: {analysis['identity_mode']} | Tension: {analysis.get('core_tension', '')[:60]}")
 
     return analysis

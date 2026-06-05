@@ -97,8 +97,23 @@ Structure (adapt — don't follow rigidly):
 
 ── PROOF POINTS ──────────────────────────────────────────────────────────────
 
-Use ONLY the relevant proof points from the analysis. 2–3 maximum.
-They land mid-letter, after you've shown you understood the role.
+The user message gives you specific proof points selected for this role. You MUST
+use them. They are the concrete evidence that makes the letter credible. A letter
+with zero proof points is a failure — rewrite it.
+
+Use them ALL when there are 2-3. Weave them into the body as lived experience, not
+as a credentials list. They land mid-letter, after you've shown you understood the
+role. Each one should feel like it belongs to the specific argument you're making,
+not pasted in.
+
+The ONLY exception: if the proof points field says "none obvious" or steers you to
+a narrative angle, follow that instead. Otherwise, every proof point given to you
+appears in the letter.
+
+If a geographic-positioning proof point is given (French in Paraguay, LLC in US,
+senior profile at entry-level cost): state it plainly and as a commercial advantage,
+not an apology.
+
 If Swapfiets Barcelona is used and the role involves resilience, local execution,
 or launch under constraints: add one sentence about the Covid lockdown context
 (curfews at 4pm, zero paid media, organic growth only).
