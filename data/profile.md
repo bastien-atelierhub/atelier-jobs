@@ -1,4 +1,4 @@
-# BASTIEN JOUBERT — Mission Profile v8
+# BASTIEN JOUBERT — Mission Profile v9
 *Unified profile for ATELIER proposals (freelance) and permanent job applications.*
 *Last updated: June 2026*
 
@@ -6,26 +6,20 @@
 
 ## 00. HOW TO USE THIS DOCUMENT
 
-This profile covers two distinct output modes. Read the `identity_mode` field passed by the pipeline and apply the correct framing rules throughout.
+Two output modes, controlled by the `identity_mode` field:
 
-| identity_mode | What this means | How to present |
+| identity_mode | Context | How to present |
 |---|---|---|
-| `freelance` | Upwork, Contra, project-based, client work | Bastien = ATELIER founder. Studio logic. Direct operator. |
-| `permanent` | LinkedIn, in-house role, CDI/full-time | Bastien = senior marketing/AI professional. ATELIER = proof of depth, not conflict. |
+| `freelance` | Upwork, Contra, project work, LinkedIn contract roles | Bastien = ATELIER founder, direct operator. Sign "Bastien Joubert — ATELIER" |
+| `permanent` | LinkedIn permanent, CDI, full-time | Bastien = senior marketing/AI professional. ATELIER = proof of depth. Sign "Bastien Joubert" |
 
-**If identity_mode is not passed, infer from context:**
-- Job board URL (Upwork, Contra, Wellfound project) → `freelance`
-- LinkedIn job post, company careers page, "full-time", "CDI", "permanent" → `permanent`
-
-**Key differences between modes:**
+If identity_mode is not passed: job board URLs → `freelance`; LinkedIn permanent / "CDI" / "full-time" → `permanent`.
 
 | | Freelance | Permanent |
 |---|---|---|
-| Opening | Attack the problem or the brief | Connect directly to the role or the company |
-| ATELIER mention | Front and center | Background context only |
-| Gaps | Entrepreneurship covers everything | Addressed with "deliberate choice + team hunger" |
+| Opening | React to the brief or the problem | Connect to the role or the company |
+| ATELIER | Front and center | Background context only |
 | Closing | Concrete next step or deliverable | Direct question or door-opening statement |
-| Length | 150–220 words (Upwork/Contra shorter) | 180–220 words |
 | Salary | Never mention unless asked | Never volunteer. Ask their range first. |
 
 ---
@@ -45,47 +39,47 @@ A French creative and AI operator who went from Nike Europe brand architect to b
 
 ---
 
-## 02. GEOGRAPHIC POSITIONING — WHEN AND HOW TO USE IT
+## 02. HOW BASTIEN THINKS AND WORKS
+
+*This is context to write FROM. It tells you who is behind the letter. Never quote it directly.*
+
+Bastien thinks in systems before he thinks in tasks. He gets bored fast when the problem is already solved — he needs to be building something, not maintaining it. He works best alone or with one or two people he trusts completely. He has no patience for slow decisions or meetings that replace thinking. He finds most briefs underambitious and will quietly exceed them. He is drawn to projects that feel slightly too big for one person. He has learned everything important by doing it wrong first. He does not separate work from curiosity — if something interests him, he goes deep, whether it's on the clock or not.
+
+---
+
+## 03. GEOGRAPHIC POSITIONING — WHEN AND HOW TO USE IT
 
 **On Upwork posts with budgets under $25k/year or $50/hr:**
 Mention it explicitly. Not as an excuse — as a commercial argument.
-
 Frame: "French, based in South America (Paraguay), LLC registered in the US for seamless payment. Senior-level experience at a cost structure that makes sense for your budget."
-
-This is honest and it works. These companies are looking for exactly this profile — they just can't say it in the job post.
+These companies are looking for exactly this profile. They just can't say it in the job post.
 
 **On premium freelance or permanent roles ($50k+/year, LinkedIn, institutional):**
 Never mention it. It plays against the positioning.
 
-**Practical details for the pipeline:**
-- LLC registered in New Mexico (US)
-- Invoices in USD
-- Payments via US bank account — zero friction for US or international clients
-- European clients: EUR invoicing possible but not yet tested — flag if needed
+**Practical details:** LLC in New Mexico (US), invoices in USD, US bank account, zero payment friction. EUR invoicing possible but not yet tested.
 
 ---
 
-## 03. LANGUAGES
+## 04. LANGUAGES
 
 - French: native
-- Spanish: fluent — 10 years in Latin America (Colombia, Ecuador, Barcelona). Full working language. NOT limited working proficiency. Use Spanish proposals confidently for LatAm and Spanish clients.
+- Spanish: fluent — 10 years in Latin America (Colombia, Ecuador, Barcelona). Full working language. Use Spanish proposals with full confidence for LatAm and Spanish clients.
 - English: full professional
 - Italian: conversational base, recoverable quickly
 
 ---
 
-## 04. VOICE
+## 05. VOICE
 
-The proposals should feel like they were written by a specific person with a history — not generated. There is a story behind every application: Nike, four continents, building things alone, learning everything the hard way. That weight should be present without being stated directly. Warm confidence, not cold efficiency. The writing can breathe a little.
+The proposals should feel like they were written by a specific person with a history — not generated. There is a story behind every application: Nike, four continents, building things alone, learning everything the hard way. That weight should be present without being stated directly. Warm confidence, not cold efficiency. The writing can breathe.
 
 When in doubt: less punchy, more human. Short sentences are a tool, not a religion.
 
-- Direct. No hedging.
-- Short sentences. Short paragraphs.
-- Confident without posturing.
-- Dry, occasionally provocative — not for shock, but I say what others don't.
-- NO EM DASHES ( — ) anywhere. Use a period or a new sentence instead.
-- No bullet lists unless strictly necessary for readability.
+- Direct. No hedging. Confident without posturing.
+- Dry, occasionally provocative — I say what others don't.
+- NO EM DASHES ( — ) anywhere. Use a period or a new sentence.
+- No bullet lists unless strictly necessary.
 
 NEVER: passionate, leverage, end-to-end solutions, reach out, synergies, journey, excited to, love to, help you achieve, full potential, innovative solutions, cutting-edge.
 
@@ -93,7 +87,7 @@ DO: direct statements, specific numbers, honest framing of what I bring and what
 
 ---
 
-## 05. BACKGROUND
+## 06. BACKGROUND
 
 ### Nike — 4 years, Paris then Amsterdam (2012–2016)
 
@@ -113,9 +107,7 @@ The anchor proof point. Use for: brand strategy, sport, digital marketing, campa
 - Nike Football App European launch: membership strategy, consumer acquisition, EMEA rollout.
 
 **What Nike does NOT prove (be honest if pressed):**
-- Do not claim team metrics as personal results under pressure.
-- Tiempo x Totti sold out in 48h is the one result fully defensible as mine.
-- What Nike actually proves: operating inside a complex global brand, managing agencies, running large campaigns end-to-end, launching products in new markets, creative innovation at scale.
+Tiempo x Totti sold out in 48h is the one result fully defensible as solely mine. Do not claim team metrics as personal results. What Nike actually proves: operating inside a complex global brand, managing agencies, running large campaigns end-to-end, launching products in new markets, creative innovation at scale.
 
 ---
 
@@ -125,9 +117,7 @@ Use for: market launch, growth from zero, solo execution, community building, re
 
 Built the Barcelona market from zero. Solo, no marketing team, minimal budget. 1,000+ members in 6 months.
 
-Key context: full Covid lockdowns, curfews at 4pm, zero paid media. Growth was organic and community-led (Bike Club) with influencer partnerships. This makes the result significantly stronger than the number alone suggests.
-
-Mission completed. Voluntary departure end of 2021.
+Key context: full Covid lockdowns, curfews at 4pm, zero paid media. Growth was organic and community-led (Bike Club) with influencer partnerships. This makes the result significantly stronger than the number alone suggests. Mission completed. Voluntary departure end of 2021.
 
 ---
 
@@ -135,7 +125,7 @@ Mission completed. Voluntary departure end of 2021.
 
 Use for: agency context, creative leadership, LatAm market, innovation, VR/tech marketing.
 
-Co-led a creative and tech team of 8. Owned creative direction and strategic side. Clients: Bancolombia (VR experience, first marketing VR activation in Colombia), Haceb, GEF fashion brand.
+Co-led a creative and tech team of 8. Owned creative direction and the strategic side. Clients: Bancolombia (VR experience, first marketing VR activation in Colombia), Haceb, GEF fashion brand.
 
 ---
 
@@ -151,92 +141,47 @@ Use for: AI automation, web development, brand strategy, creative direction, cur
 
 Boutique AI and creative studio. Decentralized. Remote-first. Built progressively since 2020 under META108, rebranded ATELIER in 2024.
 
-**AI & Automation systems built and running in production:**
+**AI & automation systems built and running in production:**
 
-**Proposal Engine (Website)**
-Client fills a 5-step brief form on the website. This triggers: DeepSeek analysis of the brief, competitive research via Tavily, automated pricing calculation, Google Slides proposal generation, PDF export, and Telegram notification to Bastien — all without human intervention. Zero to full commercial proposal in under 60 seconds.
-Stack: Cloudflare Workers, GitHub Actions, DeepSeek, Google Slides API, Telegram Bot API, Airtable CRM.
-GitHub: github.com/bastien-atelierhub/proposal-generator-showcase
-
-**Social Content Engine**
-Manages 8+ social accounts simultaneously across different brands and personalities. One idea input (text or media) via iOS Shortcut triggers: AI rewrite calibrated to each account's editorial voice (character cards in Markdown), ElevenLabs voice synthesis if needed, Kie.ai visual/video generation if needed, scheduled multi-platform publishing (Instagram, Facebook, Threads, Twitter, LinkedIn). One input to published post across all accounts in under 2 minutes.
-Stack: Node.js, Cloudflare Workers, GitHub Actions, DeepSeek, Grok, ElevenLabs, Kie.ai, Cloudinary, Meta API, Twitter API, LinkedIn API, Google Sheets as CMS.
-GitHub: github.com/bastien-atelierhub/social-engine-showcase
-
-**Job Pipeline**
-Scrapes 8+ job platforms (RemoteOK, Remotive, WeWorkRemotely, LinkedIn, Upwork, etc.) twice weekly. Hybrid scoring: local keywords then DeepSeek analysis only for high-potential listings. Qualified opportunities exported to Google Sheets with fit analysis and status tracking. One click generates a fully personalized proposal: DeepSeek fit analysis, Grok proposal generation, Google Doc creation, write-back to Sheet, Telegram notification.
-Stack: Node.js, Python, GitHub Actions, DeepSeek, Grok, Google Sheets API, Google Drive API, Telegram Bot API.
-GitHub: github.com/bastien-atelierhub/job-pipeline-showcase
-
-**Blog Writer Pipeline**
-Keyword input triggers: topic planning, web research via Tavily, 1,200-word SEO article generation respecting strict anti-AI-detection rules (no em dashes, no characteristic AI phrasing), Git push as Pull Request, Telegram approval with one-tap merge and publish.
-Stack: Cloudflare Workers, GitHub Actions, Grok, DeepSeek, Tavily, GitHub API, Telegram Bot API.
-GitHub: github.com/bastien-atelierhub/blog-writer-showcase
-
-**Extract Knowledge**
-YouTube URL input triggers: full transcript extraction, DeepSeek synthesis in two modes (Deep Dive for strategic analysis / Tutorial for actionable steps), HTML document generation, Google Drive archiving, Telegram notification with direct link.
-Stack: Node.js, GitHub Actions, YouTube Transcript API, DeepSeek, Google Drive API, Telegram Bot API.
-GitHub: github.com/bastien-atelierhub/knowledge-extractor-showcase
+- **Proposal Engine:** a client fills a brief form on the website. Sixty seconds later they have a fully formatted commercial proposal in their inbox — analysis, competitive research, pricing, generated slides, PDF. No human touched it.
+- **Social Content Engine:** manages 8+ social accounts at once, each with its own editorial voice. One idea input, two minutes later it's published across Instagram, Facebook, Threads, Twitter, and LinkedIn, adapted per platform and per account.
+- **Job Pipeline:** scrapes 8+ job platforms twice weekly, scores listings, and generates personalized proposals on one click. (This system.)
+- **Blog Writer:** keyword in, a 1,200-word SEO article out as a pull request, with one-tap approve and publish from the phone.
+- **Extract Knowledge:** a YouTube URL in, a structured synthesis document archived to Drive, link sent to Telegram.
 
 **Client deliverables:**
 - Almara Maison (Saudi Arabia): full brand identity + Antigravity website + AI automation infrastructure + social media strategy. Wellness and neuroscience workplace brand. Zero to live in two weeks.
 - Hamadryade Lodge (Ecuador): website rebuild, copywriting in 3 languages (EN/FR/ES), marketing strategy, offer architecture. Built on-site, living at the lodge for one month.
-- Nūrun / Desert Technologies (Saudi Arabia): naming strategy + full brand identity. Live company, three operational verticals (Nurun Power, Nurun Mobility, Nurun Engineering).
+- Nūrun / Desert Technologies (Saudi Arabia): naming strategy + full brand identity. Live company, three operational verticals (Power, Mobility, Engineering).
 - OKO Club (France): brand architecture + 4 event sub-brands, full identity system, environmental design.
 - Skunkerz (France): brand identity + e-commerce website + packaging. CBD brand built to stand out in a market drowning in wellness beige.
 
 ---
 
-## 06. SKILLS — HONEST STACK
+## 07. SKILLS — HONEST STACK
 
 ### Strong — leads and delivers alone
-- Brand strategy and positioning
-- Digital marketing strategy (campaigns, channels, content)
-- Creative direction (visual and copy)
-- Social media strategy and content production
-- Copywriting (ads, landing pages, email sequences, brand voice)
-- AI automation: n8n, GitHub Actions, Cloudflare Workers, Claude API, DeepSeek API, Grok API
-- Agentic workflow design: multi-step pipelines, human-in-the-loop systems, automated proposal and content engines
-- AI-led web development (Antigravity — no WordPress ever)
-- Content strategy and editorial direction
-- Short-form video (scripting, direction, AI-generated production)
-- Prompt engineering (production-grade systems, anti-AI-detection rules)
-- Campaign management (briefing, agency direction, execution oversight)
-- Community building and brand activations
-- Naming strategy
+Brand strategy and positioning. Digital marketing strategy. Creative direction (visual and copy). Social media strategy and content production. Copywriting (ads, landing pages, email, brand voice). AI automation and agentic workflow design (multi-step pipelines, human-in-the-loop systems). AI-led web development (Antigravity — no WordPress ever). Content and editorial strategy. Short-form video (scripting, direction, AI-generated production). Prompt engineering (production-grade, anti-AI-detection). Campaign management. Community building and brand activations. Naming strategy.
 
 ### Design — self-taught, production-grade
-Bastien has been designing for clients since 2020. Not formally trained — but he built his eye at Nike Europe, working daily alongside the best creative teams Nike had in Europe, and has been practicing on real client work ever since. Primary tool is Figma: vectoriel, brand systems, UI, everything. Pixelmator for photo retouching. Affinity for file extraction when needed. Does not use Illustrator — deliberately moved on. Portfolio on Contra: Nūrun, OKO Club, Almara Maison, Skunkerz, Hamadryade Lodge.
+Designing for clients since 2020. Not formally trained, but built his eye at Nike Europe alongside the best creative teams Nike had in Europe, practicing on real client work ever since. Primary tool is Figma: brand systems, UI, vectoriel. Pixelmator for retouching. Does not use Illustrator, deliberately. Portfolio on Contra: Nūrun, OKO Club, Almara Maison, Skunkerz, Hamadryade Lodge.
 
-For smaller projects, delivers solo. For larger ones, works with Julian — a senior Colombian designer he's known since Isobar Medellín in 2018. They've collaborated on most of the portfolio projects. Bastien art directs at 60-70%, Julian elevates the execution. Both on Figma. Available at any hour.
-
-On premium ATELIER briefs: "flexible studio structure with a senior designer on call" is a valid framing.
-On small-budget Upwork posts: present as solo. Do not mention Julian.
+For larger projects, works with Julian — a senior Colombian designer known since Isobar Medellín in 2018, on most portfolio projects. Bastien art directs at 60-70%, Julian elevates execution. On premium ATELIER briefs: "flexible studio structure with a senior designer on call." On small-budget Upwork posts: present as solo, do not mention Julian.
 
 ### Solid — executes with minimal support
-- SEO (technical + content strategy)
-- Graphic design: Figma (primary), Pixelmator, Affinity — brand identities, social assets, UI, web
-- Meta Ads, Google Ads (strategy + setup)
-- Market launch strategy (new market entry, go-to-market)
-- Google Sheets as operational CMS and database layer
+SEO. Graphic design (Figma, Pixelmator). Meta Ads, Google Ads (strategy + setup). Market launch / go-to-market. Google Sheets as operational CMS.
 
 ### Working knowledge
-- AI video tools: Runway ML, Kling, Higgsfield, Pika Labs, Kie.ai — used in production for social content
-- ElevenLabs (voice synthesis integration in automated pipelines)
-- Data analysis (reads and interprets dashboards)
-- Python scripting (orchestrates and directs, does not write from scratch)
-- Flutter / Dart (personal project, not client-ready)
+AI video tools (Runway ML, Kling, Higgsfield, Kie.ai) used in production. ElevenLabs. Data analysis (reads dashboards). Python (orchestrates and directs, does not write from scratch). Flutter / Dart (personal project, not client-ready).
 
 ### In active development — video specialization
-AI video production is a deliberate direction. Currently building an automated video production pipeline. Proof of concept already live: @goku.ssjn on TikTok, an AI-generated Dragon Ball Z account built solo with no promotion — 2,830 followers and 81,400+ likes. Untouched for 6 months and still growing. New content in production using current generation models (Runway ML, Kling, Higgsfield). This is not a hobby — it is a systematic test of what AI video can do at scale with zero budget.
-
-Use this angle for: video editor roles, AI content production, social media video, creative tech positions. Frame as: "I've already proven the model works. I'm now building the infrastructure to run it at scale."
+AI video production is a deliberate direction. Proof of concept already live: @goku.ssjn on TikTok, an AI-generated Dragon Ball Z account built solo with no promotion — 2,830 followers, 81,400+ likes, untouched for 6 months and still growing. Building the pipeline to do this at scale with current-generation models. Frame as: "I've already proven the model works. I'm building the infrastructure to run it at scale." Use for: video editor roles, AI content production, social media video, creative tech.
 
 ---
 
-## 07. PROOF POINTS — SELECT 2–3 MAX PER OUTPUT
+## 08. PROOF POINTS — SELECT 2–3 MAX PER OUTPUT
 
-Never use all of them. Select based on what THIS specific job or brief actually needs.
+Never use all of them. Select based on what THIS specific job actually needs.
 
 | Context | Use these |
 |---|---|
@@ -251,131 +196,84 @@ Never use all of them. Select based on what THIS specific job or brief actually 
 | Solo / freelance execution | ATELIER, Swapfiets single-handed launch |
 | Resilience / constraints | Swapfiets during Covid lockdowns, Hamadryade built on-site in the Amazon |
 | Crypto / Web3 | 6 years XRP/Ripple ecosystem, infrastructure thesis, community building |
-| AI video production | @goku.ssjn TikTok: 2,830 followers, 81.4K likes, zero paid media, zero promotion, AI-generated solo |
+| AI video production | @goku.ssjn TikTok: 2,830 followers, 81.4K likes, zero paid media, AI-generated solo |
 | Naming / brand identity | Nūrun (live Saudi company, 3 verticals), OKO Club, Almara Maison |
-| Graphic design / visual identity | Nūrun, OKO Club, Skunkerz, Almara — all on Contra portfolio. Figma-native. Self-taught since 2020, eye built at Nike. |
-| Small budget / high value | French in Paraguay, LLC in US, senior profile at entry-level cost — explicit argument on Upwork sub-$25k posts |
+| Graphic design / visual identity | Nūrun, OKO Club, Skunkerz, Almara — all on Contra. Figma-native. Eye built at Nike. |
+| Small budget / high value | French in Paraguay, LLC in US, senior profile at entry-level cost |
 | Multilingual copywriting | Hamadryade Lodge (EN/FR/ES), proposals in FR/EN/ES |
 
 ---
 
-## 08. NARRATIVE ANGLES
+## 09. NARRATIVE ANGLES
 
-### The Covid launch
-"I launched Swapfiets in Barcelona during full Covid lockdowns — curfews at 4pm, streets empty, zero paid media budget. 1,000 members in 6 months. Community-first, not campaign-first."
+These are the moments where Bastien's history becomes a feeling, not a fact. Pick one when it fits. Don't force them.
 
-### The solo campaign
-"Tiempo x Totti: I flew to Rome, directed the shoot, managed every touchpoint alone. Sold out worldwide in 48 hours. No team. No hand-holding."
+**The Covid launch:** launched Swapfiets in Barcelona during full lockdowns. Curfews at 4pm, streets empty, zero paid media. 1,000 members in 6 months. Community-first, not campaign-first.
 
-### The system builder
-"I don't just use AI tools. I build the infrastructure that makes them run at scale. A client fills a form on my website. Sixty seconds later, they have a formatted commercial proposal in their inbox. No human touched it. That system was built by me."
+**The solo campaign:** Tiempo x Totti. Flew to Rome, directed the shoot, managed every touchpoint alone. Sold out worldwide in 48 hours. No team.
 
-### The agentic workflow angle
-"My social engine manages 8 accounts simultaneously. Each one has its own editorial voice stored as a character card. One idea input, two minutes later, it's live across Instagram, Threads, Twitter, and LinkedIn — each post adapted to the platform and the account. I built this for myself. I can build it for you."
+**The system builder:** doesn't just use AI tools, builds the infrastructure that makes them run at scale. A client fills a form, sixty seconds later a formatted proposal is in their inbox, no human touched it.
 
-### The on-site immersion angle
-"I spent a month living in the Ecuadorian Amazon to rebuild a lodge's digital presence. You can't write about a place like that from a desk. The copy came from 4am jungle sounds and farm-to-table dinners, not a brief."
+**The on-site immersion:** spent a month living in the Ecuadorian Amazon to rebuild a lodge's digital presence. You can't write about a place like that from a desk.
 
-### The team returnee (permanent mode only)
-"I've had full ownership for years. I know what it costs and what it produces. I'm not coming back to an office to escape something — I'm coming to apply everything I built alone, inside a team that can actually use it."
+**The team returnee (permanent only):** has had full ownership for years, knows what it costs and what it produces. Not coming back to an office to escape something. Coming to apply everything built alone, inside a team that can actually use it.
 
-### The AI video proof of concept
-"I built a Dragon Ball Z TikTok account solo with AI-generated video, zero paid media, zero promotion. 2,830 followers and 81,400 likes. I haven't touched it in 6 months. I'm now building the pipeline to do this at scale, with current-generation models. The account is proof the content works. The pipeline is what makes it repeatable."
+**The AI video proof of concept:** built a Dragon Ball Z TikTok account solo with AI video, zero promotion. 2,830 followers, 81,400 likes. Untouched for 6 months. The account is proof the content works. The pipeline is what makes it repeatable.
 
-### The pattern reader
-"My brain connects things that aren't supposed to connect. Nike brand logic, AI systems, financial infrastructure, community mechanics. The lateral thinking is the product."
+**The pattern reader:** connects things that aren't supposed to connect. Nike brand logic, AI systems, financial infrastructure, community mechanics. The lateral thinking is the product.
 
 ---
 
-## 09. PERMANENT MODE — ADDITIONAL RULES
+## 10. PERMANENT MODE — ADDITIONAL RULES
 
-*Only applies when identity_mode = permanent.*
+*Only when identity_mode = permanent.*
 
-**Why now narrative (recruiter version):**
-"I've built and proven all of these skills independently for 10 years. I want to apply them inside a team — with the speed and autonomy I've always had, but with the collaboration, feedback, and collective impact that freelance doesn't allow. Remote is my optimal working mode. Not a constraint. A proven way of operating."
+**Why now:** "I've built and proven these skills independently for 10 years. I want to apply them inside a team — with the same autonomy, plus the collaboration and collective impact freelance doesn't allow. Remote is my optimal working mode. Not a constraint. A proven way of operating."
 
 **Handling the gaps:**
 
 | Period | Public version |
 |---|---|
 | 2016–2017 | Independent consulting: PUMA France, OLIVER Agency, Desert Technologies Saudi Arabia |
-| 2017–2019 | Isobar Colombia — Innovation Lead. Real company, real role. |
-| 2019–2020 | Entrepreneurship + skills development (AI, automation, web). |
-| 2020–2021 | Swapfiets Brand Manager Spain. Solid. Use it. |
-| 2021–present | ATELIER Hub, international clients. True and sufficient. |
+| 2017–2019 | Isobar Colombia — Innovation Lead |
+| 2019–2020 | Entrepreneurship + skills development (AI, automation, web) |
+| 2020–2021 | Swapfiets Brand Manager Spain |
+| 2021–present | ATELIER, international clients |
 | Why no CDI since Nike? | "I chose independence. I now want to combine that autonomy with a team." Do not over-explain. |
 
-**Standard answers to hard recruiter questions:**
+**Hard recruiter questions:**
+- "Why no permanent role since 2021?" → "I built ATELIER as a deliberate choice after Swapfiets. International clients, real work. What I want now is to apply that autonomy inside a team that can amplify it."
+- "Where in 5 years?" → "In a structure where I've brought real value on brand, growth, or systems. I build on duration, not titles."
+- "You've moved a lot, are you stable?" → "The movement was always in service of the work. Each base gave me cultural fluency. I'm based in Asunción now, remote, building long-term."
 
-"Why no permanent role since 2021?"
-"I built ATELIER as a deliberate choice after Swapfiets. International clients, real work. What I want now is to apply that same autonomy inside a team that can amplify it."
+**Salary:** minimum viable 1,200 EUR/month net. Target 2,000–3,500 EUR. Never volunteer the minimum. Ask their range first.
 
-"Where do you see yourself in 5 years?"
-"In a structure where I've brought real value — on brand, growth, or systems. I build on duration, not on titles."
-
-"You've moved a lot — are you stable?"
-"The movement was always in service of the work. Each base gave me cultural fluency I wouldn't have had otherwise. I'm based in Asunción now, remote, building long-term."
-
-**Salary:**
-Minimum viable: 1,200 EUR/month net. Target: 2,000–3,500 EUR depending on role. Never volunteer the minimum. Ask their range first.
-
-**Operating style for permanent roles:**
-Works best with clear objectives and full autonomy on execution. No micromanagement. Delivers in 1:1 or solo context. Group meetings and open-plan offices are high cognitive cost — flag this as a working style preference, not a flaw.
+**Operating style:** works best with clear objectives and full autonomy on execution. No micromanagement. Group meetings and open-plan offices are high cognitive cost — frame as working-style preference, not a flaw.
 
 ---
 
-## 10. WHAT I DON'T DO
+## 11. WHAT I DON'T DO
 
-- No traditional PR or media buying
-- No physical event logistics or production
-- No WordPress, Shopify, or WooCommerce (ever — non-negotiable)
-- No deep data science, SQL, or analytics engineering
-- No cold sales or quota-carrying roles
-- No crypto consulting (knowledge is personal, no client track record)
-- No Catalan (zero — flag for Catalan-language roles)
+No traditional PR or media buying. No physical event logistics. No WordPress, Shopify, or WooCommerce (ever, non-negotiable). No deep data science, SQL, or analytics engineering. No cold sales or quota-carrying roles. No crypto consulting (knowledge is personal, no client track record). No Catalan.
 
 ---
 
-## 11. PLATFORM RULES
+## 12. LENGTH & SIGNATURE BY PLATFORM
 
-### Upwork / Contra / Wellfound
-- identity_mode: `freelance`
-- Present as ATELIER studio founder
-- 100–220 words. Attack the problem on line one. No salutation.
-- End with a concrete first step or deliverable, not "happy to chat"
-- Sign: "Bastien Joubert — ATELIER"
+| Platform | Mode | Length | Signature |
+|---|---|---|---|
+| Upwork / Contra / Wellfound | freelance | 100–220 words, attack the problem line one | Bastien Joubert — ATELIER |
+| LinkedIn contract / project | freelance | 180–220 words | Bastien Joubert |
+| LinkedIn permanent | permanent | 220–260 words, substance over energy | Bastien Joubert |
+| LinkedIn institutional / large brand | either | 220–260 words | per mode |
 
-### LinkedIn — Contract or project role
-- identity_mode: `freelance`
-- Present as Bastien Joubert, senior professional. ATELIER = current practice.
-- 180–220 words. Open directly on the role or the problem.
-- Sign: "Bastien Joubert"
-
-### LinkedIn — Permanent role
-- identity_mode: `permanent`
-- Present as Bastien Joubert. ATELIER = proof of depth, not competing loyalty.
-- 180–220 words. Substance over energy.
-- Sign: "Bastien Joubert"
-
----
-
-## 12. CLOSING RULES
-
-- Sign: "Bastien Joubert" or "Bastien Joubert — ATELIER" per platform rule above
-- Never: "Looking forward to hearing from you", "Best regards", "Kind regards"
-- Always end with a concrete next step or a direct question
-- The close should feel like a door opening, not a door closing
+**Closing rules:** Never "Looking forward to hearing from you", "Best regards", "Kind regards". Always end with a concrete next step or direct question. The close should feel like a door opening, not closing.
 
 ---
 
 ## 13. RED FLAGS — GENERATE BUT FLAG
 
-- Budget below $500 project or $80/hr (freelance)
-- Salary below 1,200 EUR/month net (permanent)
-- Requires fluent German, Catalan, or other language not in stack
-- On-site presence required (flag — can travel for the right opportunity)
-- WordPress or Shopify mandatory
-- Traditional sales or quota-carrying role
+Budget below $500 project or $80/hr (freelance). Salary below 1,200 EUR/month net (permanent). Requires fluent German, Catalan, or other language not in stack. On-site presence required (can travel for the right opportunity). WordPress or Shopify mandatory. Traditional sales or quota-carrying role.
 
 *Flag it. Do not block. The apply decision always belongs to Bastien.*
 
@@ -383,21 +281,20 @@ Works best with clear objectives and full autonomy on execution. No micromanagem
 
 ## 14. WHAT STAYS INTERNAL — NEVER IN ANY OUTPUT
 
-*This section exists so the AI knows what to reframe, not what to reveal.*
+*So the model knows what to reframe, not what to reveal.*
 
 | Topic | How to handle |
 |---|---|
-| Neurodivergent profile / autism | Reframe as: "autonomous working style, pattern thinking, systems vision" |
+| Neurodivergent profile / autism | Reframe as "autonomous working style, pattern thinking, systems vision" |
 | Depressive episodes | Covered by entrepreneurship or transition periods. Never named. |
-| Crypto trading (active) | Reframe as: "deep ecosystem knowledge, 6-year infrastructure thesis" |
-| Polemic Instagram account | Never mentioned. |
-| Financial runway | Never. Changes nothing positively. |
-| Post-Covid nomadism / vaccine position | Reframe as: "remote-first, international base" |
+| Crypto trading (active) | Reframe as "deep ecosystem knowledge, 6-year infrastructure thesis" |
+| Polemic Instagram account | Never mentioned |
+| Financial runway | Never |
+| Post-Covid nomadism / vaccine position | Reframe as "remote-first, international base" |
 | Reasons for leaving Swapfiets | "Mission completed, voluntary departure." Full stop. |
 | Liquid Performance app | Personal project in progress. Not client-ready. Do not mention. |
 
 ---
 
-*BASTIEN JOUBERT — Mission Profile v8 — June 2026*
-*Single source of truth for ATELIER proposals (freelance) and permanent job applications.*
-*identity_mode field controls output framing. See Section 00.*
+*BASTIEN JOUBERT — Mission Profile v9 — June 2026*
+*Single source of truth. identity_mode controls output framing. See Section 00.*
