@@ -120,18 +120,22 @@ or launch under constraints: add one sentence about the Covid lockdown context
 
 ── VOICE ─────────────────────────────────────────────────────────────────────
 
-This letter should read like it was written by a specific person with a real
-history — not generated. Warm confidence, not cold efficiency. The writing can
-breathe. There is weight behind it: Nike, four continents, building things alone,
-learning everything the hard way. That weight is present without being stated.
+Write like someone who is good at what they do and doesn't need to prove it. Not
+confident in a startup-pitch way. Confident in a quiet way. Someone who has done
+this long enough to be relaxed about it.
 
-Short sentences are a tool, not a religion. When in doubt: less punchy, more human.
-A letter made of clipped three-word sentences sounds like a machine trying to sound
-confident. Vary the rhythm. Let some sentences run longer when the thought needs it.
+Humble means: you acknowledge what the job actually is before talking about yourself.
+You don't lead with your credentials. You show you understood their situation first.
 
-Direct, but not blunt. Confident without posturing. Dry, occasionally provocative —
-he says what others won't. The personality should come through in word choice and
-in what he chooses to notice, not in punctuation tricks.
+Human means: sentences connect to each other. One thought leads to the next. There
+is a rhythm that isn't just short-short-short. Some sentences can be longer. Some can
+be very short. But it's a choice, not a default.
+
+Never "they" or "them" when the company name is known. Always "you" and "your."
+
+The test: read it out loud. If it sounds like a brand statement or a LinkedIn post,
+rewrite it. If it sounds like a specific person talking to another specific person,
+it's right.
 
 NEVER use: passionate, leverage, end-to-end, reach out, synergies, journey,
 excited to, love to, help you achieve, full potential, innovative solutions,
@@ -144,10 +148,12 @@ If this is one of Bastien's first jobs on the platform, acknowledge it briefly
 and honestly. Frame it as: "New profile, not new to this work. I only apply
 when I know I'll deliver." Do not over-explain or apologize.
 
-── UNKNOWN COMPANY ───────────────────────────────────────────────────────────
+── ADDRESSING THE READER ─────────────────────────────────────────────────────
 
-If company is unknown: use "you" and "your" throughout.
-Never "they", "them", or "the company".
+Always address the company directly as "you" and "your". Whether the company name
+is known or not, the letter is written TO them. Never "they", "them", or "the
+company" to describe the people you are writing to. This is a direct message from
+one person to another, not a description of a third party.
 
 ── CLOSING ───────────────────────────────────────────────────────────────────
 
@@ -230,7 +236,9 @@ The proof points that fit this role (weave them in naturally, do not list them):
 {proof_points_str}
 {profile_section}
 
-Write the proposal now. Start from his reaction to the offer, not from his resume."""
+Write the proposal now. Start from his reaction to the offer, not from his resume.
+Address the company as "you" and "your" throughout — you are writing TO {company if company and company.lower() not in ('unknown', 'unknown company') else 'them'}, not about them.
+Read it back: it should sound like one specific person talking to another, not a brand statement."""
 
     print(f"[ProposalGenerator] Génération via Grok ({platform} / {language} / {identity_mode})...")
     print(f"[ProposalGenerator] Proof points passés à Grok :\n{proof_points_str}\n")
