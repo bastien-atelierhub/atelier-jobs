@@ -7,16 +7,23 @@ import os
 import re
 from openai import OpenAI
 
-# Constantes
 DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
 DEEPSEEK_MODEL = "deepseek-chat"
 MAX_TOKENS = 1500
 TEMPERATURE = 0.3
 
-SYSTEM_PROMPT = """You are an expert at analyzing job offers for Bastien Joubert, founder of ATELIER studio.
+
+def _build_system_prompt(profile_md_content: str) -> str:
+    profile_section = f"\n\nBastien's full profile — use this as the primary reference for all decisions:\n{profile_md_content}" if profile_md_content else ""
+    return f"""You are an expert at analyzing job offers for Bastien Joubert, founder of ATELIER studio.
+Your role is to produce a structured analysis that will be used to generate a personalized proposal.
+All decisions — proof point selection, fit assessment, identity mode — must be grounded in Bastien's actual profile below, not in generic assumptions.{profile_section}
+
+---
+
 Analyze the job offer and return ONLY a valid JSON with this exact structure:
 
-{
+{{
   "fit_bullets": [
     "✅ <specific positive — reference actual skills or experience from the offer>",
     "✅ <specific positive>",
@@ -30,27 +37,31 @@ Analyze the job offer and return ONLY a valid JSON with this exact structure:
   "job_title": "<job title>",
   "summary": "<1 sentence: what they specifically need — be concrete, not generic>",
   "language": "<fr|en|es|it>",
-  "identity_mode": "<atelier|bastien_contract|bastien_permanent>",
+  "identity_mode": "<freelance|permanent>",
   "key_requirements": ["<req1>", "<req2>", "<req3>"],
   "relevant_proof_points": ["<which of Bastien's experiences are most relevant and why>"],
   "budget_signal": "<premium|mid|low|unknown>",
   "apply": "<yes|maybe|no>",
   "apply_reason": "<one sentence honest reason>"
-}
+}}
+
+Rules:
 
 For "identity_mode":
-- "atelier" → Upwork, Contra, freelance platforms, or clear project/mission posts
-- "bastien_contract" → LinkedIn contract/temp/project roles inside a company
-- "bastien_permanent" → LinkedIn permanent employment offers
+- "freelance" → Upwork, Contra, freelance platforms, project/mission posts, LinkedIn contract roles
+- "permanent" → LinkedIn permanent employment offers, CDI, full-time roles
 
-For "relevant_proof_points": don't just list them — explain which experience maps to what they need.
-Example: "Swapfiets solo launch → they need someone who can execute independently without a team"
+For "relevant_proof_points":
+- Select from Bastien's actual profile above — do not invent or generalize
+- Explain which specific experience maps to what this offer needs
+- Example: "Swapfiets solo launch → they need someone who can execute independently without a team"
+- 2–3 maximum. Quality over quantity.
+- If budget_signal is "low" and platform is "Upwork", always add this proof point:
+  "Geographic positioning — French in Paraguay, LLC in the US, senior profile at entry-level cost. Mention explicitly in the proposal."
 
 For "language": detect the primary language of the job offer (title + description).
 Return "fr" for French, "en" for English, "es" for Spanish, "it" for Italian.
 Default to "en" if language cannot be determined or is another language.
-Note: Bastien speaks Spanish fluently (10 years in Latin America). Spanish proposals
-are generated at the same standard as English — full confidence, no simplification.
 
 Return ONLY the JSON object, no markdown, no explanation."""
 
@@ -58,7 +69,7 @@ Return ONLY the JSON object, no markdown, no explanation."""
 def analyze_job_offer(scraped_data: dict, profile_md_content: str = "", identity_mode: str = None) -> dict:
     """
     Envoie le contenu brut à DeepSeek pour analyse structurée.
-    Retourne le JSON parsé avec fit_bullets, metadata, apply decision et langue.
+    Le profil complet est injecté dans le system prompt pour un meilleur ancrage.
     """
     api_key = os.environ.get("DEEPSEEK_API_KEY")
     if not api_key:
@@ -69,22 +80,23 @@ def analyze_job_offer(scraped_data: dict, profile_md_content: str = "", identity
     raw_content = scraped_data.get("raw_content", "")
     platform_detected = scraped_data.get("platform", "Other")
 
-    profile_section = f"\nBastien's profile for context:\n{profile_md_content}" if profile_md_content else ""
-    identity_section = f"\nForced identity_mode: {identity_mode} — override DeepSeek inference, use this value." if identity_mode else ""
+    identity_section = f"\nForced identity_mode: {identity_mode} — override inference, use this value." if identity_mode else ""
 
     user_message = f"""Platform: {platform_detected}
 URL: {scraped_data.get("source_url", "")}
 {identity_section}
 Job offer:
-{raw_content[:8000]}{profile_section}"""
+{raw_content[:8000]}"""
 
     print(f"[Analyzer] Envoi à DeepSeek ({len(raw_content)} chars de contenu)...")
+
+    system_prompt = _build_system_prompt(profile_md_content)
 
     try:
         response = client.chat.completions.create(
             model=DEEPSEEK_MODEL,
             messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message},
             ],
             max_tokens=MAX_TOKENS,
@@ -96,12 +108,12 @@ Job offer:
     raw_response = response.choices[0].message.content.strip()
     print(f"[Analyzer] Réponse reçue : {raw_response[:200]}...")
 
-    # Nettoyage au cas où le modèle ajoute du markdown
+    # Nettoyage markdown
     if raw_response.startswith("```"):
         lines = raw_response.split("\n")
         raw_response = "\n".join(lines[1:-1])
 
-    # Extraire le premier objet JSON de la réponse (robuste aux textes avant/après)
+    # Extraire le premier objet JSON
     json_match = re.search(r'\{[\s\S]*\}', raw_response)
     if json_match:
         raw_response = json_match.group(0)
@@ -109,15 +121,13 @@ Job offer:
     try:
         analysis = json.loads(raw_response)
     except json.JSONDecodeError as e:
-        # Tentative de réparation : tronquer après la dernière virgule valide
-        # pour gérer les guillemets non échappés dans les strings longues
         try:
             import json5
             analysis = json5.loads(raw_response)
         except Exception:
             raise Exception(f"[Analyzer] JSON invalide retourné par DeepSeek : {e}\nRéponse : {raw_response}")
 
-    # Valeurs par défaut si champs manquants
+    # Valeurs par défaut
     analysis.setdefault("fit_bullets", [])
     analysis.setdefault("job_type", "freelance")
     analysis.setdefault("role_type", "other")
@@ -126,7 +136,7 @@ Job offer:
     analysis.setdefault("job_title", "Unknown Role")
     analysis.setdefault("summary", "")
     analysis.setdefault("language", "en")
-    analysis.setdefault("identity_mode", "atelier")
+    analysis.setdefault("identity_mode", "freelance")
     analysis.setdefault("key_requirements", [])
     analysis.setdefault("relevant_proof_points", [])
     analysis.setdefault("budget_signal", "unknown")
@@ -137,6 +147,13 @@ Job offer:
     if analysis["language"] not in ("fr", "en", "es", "it"):
         analysis["language"] = "en"
 
-    print(f"[Analyzer] {analysis['job_title']} @ {analysis['company']} | Apply: {analysis['apply']} | Lang: {analysis['language']}")
+    # Normaliser identity_mode (compatibilité ancienne nomenclature)
+    mode = analysis["identity_mode"]
+    if mode in ("atelier", "bastien_contract"):
+        analysis["identity_mode"] = "freelance"
+    elif mode == "bastien_permanent":
+        analysis["identity_mode"] = "permanent"
+
+    print(f"[Analyzer] {analysis['job_title']} @ {analysis['company']} | Apply: {analysis['apply']} | Lang: {analysis['language']} | Mode: {analysis['identity_mode']}")
 
     return analysis
