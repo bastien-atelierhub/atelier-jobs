@@ -203,7 +203,11 @@ def create_proposal_doc(analysis: dict, proposal: str, source_url: str) -> str:
     _style_text(requests, 1, name_end, bold=True)
 
     # ── Signature finale en italique ─────────────────────────────────────────
-    sig_start = 1 + len(header) + len(body_text) + 2  # après \n\n
+    # Position calculée par recherche dans full_text (robuste aux variations de body).
+    # full_text = header + body_text + "\n\n" + signature_text + "\n"
+    # rfind garantit qu'on cible la signature finale, pas une occurrence dans le corps.
+    sig_offset = full_text.rfind(signature_text)
+    sig_start = 1 + sig_offset
     sig_end = sig_start + len(signature_text)
     _style_text(requests, sig_start, sig_end, italic=True)
 

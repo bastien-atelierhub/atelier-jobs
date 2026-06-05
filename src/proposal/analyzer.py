@@ -163,17 +163,26 @@ Job offer:
     elif mode == "bastien_permanent":
         analysis["identity_mode"] = "permanent"
 
-    # Garantie déterministe : proof point géographique sur Upwork low-budget,
-    # même si DeepSeek a oublié de l'ajouter.
+    # Si un mode est forcé (Shortcut iOS), il l'emporte sur l'inférence DeepSeek.
+    if identity_mode in ("freelance", "permanent"):
+        analysis["identity_mode"] = identity_mode
+        print(f"[Analyzer] identity_mode forcé : {identity_mode}")
+
+    # Garantie déterministe : proof point géographique sur les offres à petit budget
+    # en mode freelance, même si DeepSeek a oublié de l'ajouter.
+    # Critère basé sur budget + mode (pas sur platform, trop fragile via Shortcut texte brut).
     geo_pp = ("Geographic positioning — French in Paraguay, LLC in the US, senior "
               "profile at entry-level cost. Mention explicitly in the proposal.")
-    if analysis["budget_signal"] == "low" and analysis["platform"] == "Upwork":
+    if analysis["budget_signal"] == "low" and analysis["identity_mode"] == "freelance":
         already = any("geographic" in str(p).lower() or "paraguay" in str(p).lower()
                       for p in analysis["relevant_proof_points"])
         if not already:
             analysis["relevant_proof_points"].append(geo_pp)
-            print("[Analyzer] Proof point géographique ajouté (Upwork low-budget)")
+            print("[Analyzer] Proof point géographique ajouté (low-budget freelance)")
 
-    print(f"[Analyzer] {analysis['job_title']} @ {analysis['company']} | Apply: {analysis['apply']} | Lang: {analysis['language']} | Mode: {analysis['identity_mode']} | Tension: {analysis.get('core_tension', '')[:60]}")
+    print(f"[Analyzer] {analysis['job_title']} @ {analysis['company']} | Apply: {analysis['apply']} | Lang: {analysis['language']} | Mode: {analysis['identity_mode']} | Platform: {analysis['platform']} | Budget: {analysis['budget_signal']}")
+    print(f"[Analyzer] Proof points ({len(analysis['relevant_proof_points'])}):")
+    for p in analysis["relevant_proof_points"]:
+        print(f"  - {p}")
 
     return analysis

@@ -230,6 +230,7 @@ The proof points that fit this role (weave them in naturally, do not list them):
 Write the proposal now. Start from his reaction to the offer, not from his resume."""
 
     print(f"[ProposalGenerator] Génération via Grok ({platform} / {language} / {identity_mode})...")
+    print(f"[ProposalGenerator] Proof points passés à Grok :\n{proof_points_str}\n")
 
     try:
         response = client.chat.completions.create(
